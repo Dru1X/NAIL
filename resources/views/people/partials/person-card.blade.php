@@ -29,7 +29,7 @@
         {{--View--}}
         <div class="flex w-0 flex-1">
             <a href="{{route('people.show', $person)}}"
-               class="relative -mr-px inline-flex w-0 flex-1 items-center justify-center gap-x-3 rounded-bl-lg border border-transparent py-4 text-sm font-semibold text-gray-900 dark:text-gray-200">
+               class="relative -mr-px inline-flex w-0 flex-1 items-center justify-center gap-x-1 rounded-bl-lg border border-transparent py-4 text-sm font-semibold text-gray-900 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-700">
 
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-5 text-gray-500">
                     <path d="M10 12.5a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5Z" />
@@ -37,6 +37,19 @@
                 </svg>
 
                 View
+            </a>
+        </div>
+
+        {{--Edit--}}
+        <div class="flex w-0 flex-1">
+            <a href="{{route('people.edit', $person)}}"
+               class="relative -mr-px inline-flex w-0 flex-1 items-center justify-center gap-x-1 border border-transparent py-4 text-sm font-semibold text-gray-900 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-700">
+
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-5 text-gray-500">
+                    <path d="m2.695 14.762-1.262 3.155a.5.5 0 0 0 .65.65l3.155-1.262a4 4 0 0 0 1.343-.886L17.5 5.501a2.121 2.121 0 0 0-3-3L3.58 13.419a4 4 0 0 0-.885 1.343Z" />
+                </svg>
+
+                Edit
             </a>
         </div>
 

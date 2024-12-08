@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\PersonRequest;
 use App\Models\Person;
 use App\Services\PersonService;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\Request;
 use Illuminate\View\View;
 
 class PersonController extends Controller
@@ -19,15 +19,31 @@ class PersonController extends Controller
         return view('people.index', compact('people'));
     }
 
-    public function create() {}
+    public function create(): View
+    {
+        return view('people.create');
+    }
 
-    public function store(Request $request) {}
+    public function store(PersonRequest $request): RedirectResponse
+    {
+        $this->personService->addPerson($request->validated());
+
+        return redirect()->route('people.index');
+    }
 
     public function show(Person $person) {}
 
-    public function edit(Person $person) {}
+    public function edit(Person $person): View
+    {
+        return view('people.edit', compact('person'));
+    }
 
-    public function update(Request $request, Person $person) {}
+    public function update(PersonRequest $request, Person $person): RedirectResponse
+    {
+        $this->personService->updatePerson($person, $request->validated());
+
+        return redirect()->route('people.index');
+    }
 
     public function destroy(Person $person): RedirectResponse
     {
