@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\BowStyle;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 
@@ -10,6 +11,7 @@ class Handicap extends Model
     public $timestamps = false;
 
     protected $casts = [
+        'bow_style'       => BowStyle::class,
         'number'          => 'integer',
         'match_score'     => 'integer',
         'match_allowance' => 'integer',
