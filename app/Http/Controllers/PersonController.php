@@ -31,7 +31,10 @@ class PersonController extends Controller
         return redirect()->route('people.index');
     }
 
-    public function show(Person $person) {}
+    public function show(Person $person): View
+    {
+        return view('people.show', compact('person'));
+    }
 
     public function edit(Person $person): View
     {

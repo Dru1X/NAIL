@@ -4,10 +4,11 @@
         <img
             class="mx-auto size-32 shrink-0 rounded-full"
             src="https://placehold.co/200x200?text={{$person->initials}}"
-            alt="{{$person->initials}}">
+            alt="{{$person->initials}}"
+        >
 
         {{--Name--}}
-        <h3 class="mt-6 text-sm font-medium text-gray-900 dark:text-gray-200">
+        <h3 class="mt-6 text-sm font-semibold text-gray-900 dark:text-gray-200">
             {{$person->full_name}}
         </h3>
 
