@@ -7,12 +7,11 @@ use Illuminate\Support\Collection;
 
 class PersonService
 {
-    public function findPerson(int $id): ?Person
-    {
-        return Person::find($id);
-    }
+    // Lookup ----
 
     /**
+     * Get all people
+     *
      * @return Collection<int, Person>
      */
     public function getPeople(): Collection
@@ -23,6 +22,19 @@ class PersonService
             ->get();
     }
 
+    /**
+     * Find a single person by their unique ID
+     */
+    public function findPerson(int $id): ?Person
+    {
+        return Person::find($id);
+    }
+
+    // Management ----
+
+    /**
+     * Add a new person
+     */
     public function addPerson(array $data): Person
     {
         $fullName = trim(implode(" ", [$data['first_name'], $data['last_name']]));
@@ -32,6 +44,9 @@ class PersonService
         ]));
     }
 
+    /**
+     * Update an existing person
+     */
     public function updatePerson(Person $person, array $data): Person
     {
         $fullName = trim(implode(" ", [$data['first_name'], $data['last_name']]));
@@ -43,6 +58,9 @@ class PersonService
         return $person;
     }
 
+    /**
+     * Remove an existing person
+     */
     public function removePerson(Person $person): bool
     {
         return $person->delete();
