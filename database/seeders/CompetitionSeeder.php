@@ -9,6 +9,8 @@ class CompetitionSeeder extends Seeder
 {
     public function run(): void
     {
+        Competition::truncate();
+
         Competition::factory()
             ->count(5)
             ->create();
