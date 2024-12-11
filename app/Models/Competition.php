@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Competition extends Model
@@ -12,19 +13,26 @@ class Competition extends Model
 
     protected $fillable = [
         'name',
-        'entries_open_at',
-        'entries_close_at',
-        'starts_at',
-        'ends_at',
+        'entries_open_on',
+        'entries_close_on',
+        'starts_on',
+        'ends_on',
     ];
 
     protected function casts(): array
     {
         return [
-            'entries_open_at'  => 'immutable_datetime',
-            'entries_close_at' => 'immutable_datetime',
-            'starts_at'        => 'immutable_datetime',
-            'ends_at'          => 'immutable_datetime',
+            'entries_open_on'  => 'immutable_date',
+            'entries_close_on' => 'immutable_date',
+            'starts_on'        => 'immutable_date',
+            'ends_on'          => 'immutable_date',
         ];
+    }
+
+    // Relationships ----
+
+    public function stages(): HasMany
+    {
+        return $this->hasMany(Stage::class);
     }
 }

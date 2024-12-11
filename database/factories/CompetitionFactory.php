@@ -13,24 +13,24 @@ class CompetitionFactory extends Factory
 
     public function definition(): array
     {
-        $startsAt = CarbonImmutable::make(
+        $startsOn = CarbonImmutable::make(
             fake()->dateTimeBetween('-5 years', '-2 months')
-        );
+        )->startOfDay();
 
-        $endsAt         = $startsAt->addMonths(4);
-        $entriesOpenAt  = $startsAt->subMonth();
-        $entriesCloseAt = $startsAt->addWeek();
+        $endsOn         = $startsOn->addMonths(4);
+        $entriesOpenOn  = $startsOn->subMonth();
+        $entriesCloseOn = $startsOn->addWeek();
 
-        $span = ($startsAt->year == $endsAt->year) ?
-            $startsAt->year :
-            $startsAt->year . '/' . substr($endsAt->year, 2);
+        $span = ($startsOn->year == $endsOn->year) ?
+            $startsOn->year :
+            $startsOn->year . '/' . substr($endsOn->year, 2);
 
         return [
             'name'             => "Indoor League $span",
-            'entries_open_at'  => $startsAt,
-            'entries_close_at' => $endsAt,
-            'starts_at'        => $entriesOpenAt,
-            'ends_at'          => $entriesCloseAt,
+            'entries_open_on'  => $startsOn,
+            'entries_close_on' => $endsOn,
+            'starts_on'        => $entriesOpenOn,
+            'ends_on'          => $entriesCloseOn,
             'created_at'       => CarbonImmutable::now(),
             'updated_at'       => CarbonImmutable::now(),
         ];

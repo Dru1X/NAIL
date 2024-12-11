@@ -7,12 +7,14 @@ use Illuminate\Support\Facades\Schema;
 return new class extends Migration {
     public function up(): void
     {
-        Schema::create('competitions', function (Blueprint $table) {
+        Schema::create('stages', function (Blueprint $table) {
             $table->id();
 
-            $table->string('name')->index();
-            $table->date('entries_open_on');
-            $table->date('entries_close_on');
+            $table->foreignId('competition_id')->constrained('competitions');
+
+            $table->string('name');
+            $table->string('type', 10);
+            $table->unsignedTinyInteger('capacity');
             $table->date('starts_on');
             $table->date('ends_on');
 
@@ -23,6 +25,6 @@ return new class extends Migration {
 
     public function down(): void
     {
-        Schema::dropIfExists('competitions');
+        Schema::dropIfExists('stages');
     }
 };
