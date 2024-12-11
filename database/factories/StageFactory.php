@@ -6,6 +6,8 @@ use App\Enums\StageType;
 use App\Models\Competition;
 use App\Models\Stage;
 use Carbon\CarbonImmutable;
+use Carbon\CarbonInterface;
+use Carbon\CarbonPeriod;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Carbon;
 
@@ -37,26 +39,35 @@ class StageFactory extends Factory
 
     // State ----
 
-    public function startingOn(CarbonImmutable $startsOn): static
+    public function on(CarbonInterface $date): static
     {
-        return $this->state(fn() => [
-            'starts_on' => $startsOn,
+        return $this->state(fn(array $attributes) => [
+            'starts_on' => $date,
+            'ends_on'   => $date,
+        ]);
+    }
+
+    public function between(CarbonPeriod $period): static
+    {
+        return $this->state(fn(array $attributes) => [
+            'starts_on' => $period->start,
+            'ends_on'   => $period->end,
         ]);
     }
 
     public function league(): static
     {
         return $this->state(fn(array $attributes) => [
-            'type'    => StageType::League,
-            'ends_on' => $attributes['starts_on']->addWeeks(12),
+            'name' => 'League Stage',
+            'type' => StageType::League,
         ]);
     }
 
     public function playoff(): static
     {
         return $this->state(fn(array $attributes) => [
-            'type'    => StageType::Playoff,
-            'ends_on' => $attributes['starts_on'],
+            'name' => 'Playoff Stage',
+            'type' => StageType::Playoff,
         ]);
     }
 }
