@@ -199,14 +199,14 @@ class CompetitionService
      */
     protected function addLeagueRounds(Stage $stage): Collection
     {
-        $interval = CarbonInterval::week();
-        $period   = $stage->period->setDateInterval($interval);
-        $lastDate = $period->last();
+        $interval   = CarbonInterval::week();
+        $period     = $stage->period->setDateInterval($interval);
+        $roundCount = $period->count();
 
         /** @var CarbonInterface $roundStartsOn */
         foreach ($period as $index => $roundStartsOn) {
 
-            $isLastRound = $lastDate == $roundStartsOn;
+            $isLastRound = $roundCount == ($index + 1);
             $roundEndsOn = $isLastRound ? $stage->ends_on : $roundStartsOn->add($interval)->subDay();
 
             $stage->rounds()->create([
@@ -259,16 +259,16 @@ class CompetitionService
      */
     protected function updateLeagueRounds(Stage $stage): Collection
     {
-        $interval = CarbonInterval::week();
-        $period   = $stage->period->setDateInterval($interval);
-        $lastDate = $period->last();
+        $interval   = CarbonInterval::week();
+        $period     = $stage->period->setDateInterval($interval);
+        $roundCount = $period->count();
 
         $existingRounds = $stage->rounds()->get();
 
         /** @var CarbonInterface $roundStartsOn */
         foreach ($period as $index => $roundStartsOn) {
 
-            $isLastRound = $lastDate == $roundStartsOn;
+            $isLastRound = $roundCount == ($index + 1);
             $roundEndsOn = $isLastRound ? $stage->ends_on : $roundStartsOn->add($interval)->subDay();
 
             $roundData = [
