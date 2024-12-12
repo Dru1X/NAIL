@@ -47,6 +47,8 @@ class Stage extends Model
 
     public function rounds(): HasMany
     {
-        return $this->hasMany(Round::class);
+        return $this->hasMany(Round::class)
+            ->orderBy('starts_on')
+            ->orderBy('id');
     }
 }

@@ -45,7 +45,7 @@ class CompetitionService
      */
     public function addCompetition(array $data): Competition
     {
-        return DB::transaction(function () use ($data) {
+        return DB::transaction(function () use ($data): Competition {
 
             $competition = Competition::create([
                 'name'             => $data['name'],
@@ -73,9 +73,38 @@ class CompetitionService
      */
     public function updateCompetition(Competition $competition, array $data): Competition
     {
-        $competition->update($data);
+        return DB::transaction(function () use ($competition, $data): Competition {
+            $competition->update([
+                'name'             => $data['name'],
+                'entries_open_on'  => CarbonImmutable::make($data['entries_open_on']),
+                'entries_close_on' => CarbonImmutable::make($data['entries_close_on']),
+            ]);
 
-        return $competition;
+            $keepStageIds   = array_filter(Arr::pluck($data['stages'], 'id'));
+            $existingStages = $competition->stages;
+
+            foreach ($existingStages as $stage) {
+                if (!in_array($stage->id, $keepStageIds)) {
+                    $this->removeStage($stage);
+                }
+            }
+
+            foreach ($data['stages'] as $stageData) {
+                if ($stageId = $stageData['id']) {
+                    $this->updateStage($existingStages->find($stageId), $stageData);
+                    continue;
+                }
+
+                $this->addStage($competition, $stageData);
+            }
+
+            $competition->update([
+                'starts_on' => $competition->stages->min('starts_on'),
+                'ends_on'   => $competition->stages->max('ends_on'),
+            ]);
+
+            return $competition;
+        });
     }
 
     /**
@@ -84,10 +113,7 @@ class CompetitionService
     public function removeCompetition(Competition $competition): bool
     {
         return DB::transaction(function () use ($competition): bool {
-            $competition->stages()->each(function ($stage): void {
-                $stage->rounds()->delete();
-                $stage->delete();
-            });
+            $competition->stages()->each($this->removeStage(...));
 
             return $competition->delete();
         });
@@ -110,17 +136,60 @@ class CompetitionService
             'ends_on'   => CarbonImmutable::make($data['ends_on']),
         ]);
 
-        switch ($type) {
-            case StageType::League:
-                $this->addLeagueRounds($stage);
-                break;
+        $this->addRoundsForStage($stage);
 
-            case StageType::Playoff:
-                $this->addPlayoffRounds($stage);
-                break;
+        return $stage;
+    }
+
+    /**
+     * Update an existing stage
+     */
+    protected function updateStage(Stage $stage, array $data): Stage
+    {
+        $type = StageType::from($data['type']);
+
+        $stage->update([
+            'name'      => "$type->name Stage",
+            'type'      => $type,
+            'starts_on' => CarbonImmutable::make($data['starts_on']),
+            'ends_on'   => CarbonImmutable::make($data['ends_on']),
+        ]);
+
+        if ($stage->wasChanged('type')) {
+            $stage->rounds()->delete();
+            $this->addRoundsForStage($stage);
+
+            return $stage;
+        }
+
+        if ($stage->wasChanged(['starts_on', 'ends_on'])) {
+            $this->updateRoundsForStage($stage);
         }
 
         return $stage;
+    }
+
+    /**
+     * Remove an existing stage, and all of its rounds
+     */
+    protected function removeStage(Stage $stage): bool
+    {
+        $stage->rounds()->delete();
+
+        return $stage->delete();
+    }
+
+    /**
+     * Add the rounds needed for any type of stage
+     *
+     * @return Collection<int, Round>
+     */
+    protected function addRoundsForStage(Stage $stage): Collection
+    {
+        return match ($stage->type) {
+            StageType::League  => $this->addLeagueRounds($stage),
+            StageType::Playoff => $this->addPlayoffRounds($stage),
+        };
     }
 
     /**
@@ -168,5 +237,72 @@ class CompetitionService
         }
 
         return $stage->rounds;
+    }
+
+    /**
+     * Update all the rounds needed for any type of stage
+     *
+     * @return Collection<int, Round>
+     */
+    protected function updateRoundsForStage(Stage $stage): Collection
+    {
+        return match ($stage->type) {
+            StageType::League  => $this->updateLeagueRounds($stage),
+            StageType::Playoff => $this->updatePlayoffRounds($stage),
+        };
+    }
+
+    /**
+     * Update all rounds needed for a league stage
+     *
+     * @return Collection<int, Round>
+     */
+    protected function updateLeagueRounds(Stage $stage): Collection
+    {
+        $interval = CarbonInterval::week();
+        $period   = $stage->period->setDateInterval($interval);
+        $lastDate = $period->last();
+
+        $existingRounds = $stage->rounds()->get();
+
+        /** @var CarbonInterface $roundStartsOn */
+        foreach ($period as $index => $roundStartsOn) {
+
+            $isLastRound = $lastDate == $roundStartsOn;
+            $roundEndsOn = $isLastRound ? $stage->ends_on : $roundStartsOn->add($interval)->subDay();
+
+            $roundData = [
+                'name'      => 'Round ' . $index + 1,
+                'starts_on' => $roundStartsOn,
+                'ends_on'   => $roundEndsOn,
+            ];
+
+            if ($existingRound = $existingRounds->get($index)) {
+                $existingRound->update($roundData);
+            } else {
+                $stage->rounds()->create($roundData);
+            }
+        }
+
+        $existingRounds
+            ->slice($period->count())
+            ->each(fn($round) => $round->delete());
+
+        return $stage->rounds()->get();
+    }
+
+    /**
+     * Update all rounds needed for a playoff stage
+     *
+     * @return Collection<int, Round>
+     */
+    protected function updatePlayoffRounds(Stage $stage): Collection
+    {
+        $stage->rounds()->update([
+            'starts_on' => $stage->starts_on,
+            'ends_on'   => $stage->ends_on,
+        ]);
+
+        return $stage->rounds()->get();
     }
 }
