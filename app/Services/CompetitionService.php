@@ -90,7 +90,7 @@ class CompetitionService
             }
 
             foreach ($data['stages'] as $stageData) {
-                if ($stageId = $stageData['id']) {
+                if ($stageId = $stageData['id'] ?? null) {
                     $this->updateStage($existingStages->find($stageId), $stageData);
                     continue;
                 }

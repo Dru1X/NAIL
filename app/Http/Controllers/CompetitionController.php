@@ -35,7 +35,7 @@ class CompetitionController extends Controller
 
         $this->competitionService->addCompetition($request->validated());
 
-        return redirect()->route('competition.index');
+        return redirect()->route('competitions.index');
     }
 
     public function show(Competition $competition): View
@@ -58,7 +58,7 @@ class CompetitionController extends Controller
 
         $this->competitionService->updateCompetition($competition, $request->validated());
 
-        return redirect()->route('competition.index');
+        return redirect()->route('competitions.index');
     }
 
     public function destroy(Competition $competition): RedirectResponse
@@ -67,6 +67,6 @@ class CompetitionController extends Controller
 
         $this->competitionService->removeCompetition($competition);
 
-        return redirect()->route('competition.index');
+        return redirect()->route('competitions.index');
     }
 }
