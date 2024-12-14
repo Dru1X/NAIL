@@ -53,21 +53,21 @@
                         </div>
                         <div class="mt-3 text-center sm:ml-4 sm:mt-0 sm:text-left">
                             <h3 class="text-base font-semibold text-gray-900 dark:text-gray-200" id="modal-title">
-                                Remove person
+                                Remove competition
                             </h3>
                             <div class="mt-2 text-sm text-gray-500 dark:text-gray-400">
-                                <p class="">
+                                <p>
                                     Are you sure you want to remove
-                                    <span class="font-semibold text-gray-400 dark:text-gray-300">{{$person->full_name}}</span>?
+                                    <span class="font-semibold text-gray-400 dark:text-gray-300">{{$competition->name}}</span>?
                                 </p>
                                 <p class="mt-1">
-                                    All of their data will be permanently removed forever. This action cannot be undone.
+                                    All associated data will be permanently removed forever. This action cannot be undone.
                                 </p>
                             </div>
                         </div>
                     </div>
 
-                    <form action="{{route('people.destroy', $person)}}" method="POST" class="mt-5 sm:mt-4 sm:flex sm:flex-row-reverse">
+                    <form action="{{route('competitions.destroy', $competition)}}" method="POST" class="mt-5 sm:mt-4 sm:flex sm:flex-row-reverse">
                         @csrf
                         @method('DELETE')
 
