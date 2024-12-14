@@ -39,13 +39,11 @@ class Competition extends Model
 
     public function status(): Attribute
     {
-        return Attribute::get(function () {
-            return match (true) {
-                !$this->period->isStarted()   => 'planning',
-                $this->period->isInProgress() => 'ongoing',
-                $this->period->isEnded()      => 'ended',
-                default                       => 'unknown',
-            };
+        return Attribute::get(fn() => match (true) {
+            !$this->period->isStarted()   => 'planning',
+            $this->period->isInProgress() => 'ongoing',
+            $this->period->isEnded()      => 'ended',
+            default                       => 'unknown',
         });
     }
 

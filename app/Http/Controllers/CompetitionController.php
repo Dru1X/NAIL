@@ -51,7 +51,9 @@ class CompetitionController extends Controller
     {
         Gate::authorize('update', $competition);
 
-        return view('competitions.edit', compact('competition'));
+        return view('competitions.edit', [
+            'competition' => $this->competitionService->findCompetition($competition->id),
+        ]);
     }
 
     public function update(CompetitionRequest $request, Competition $competition): RedirectResponse

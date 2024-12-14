@@ -27,9 +27,32 @@
 
                 <dt class="sr-only">Status</dt>
                 <dd class="mt-3">
-                <span class="inline-flex items-center rounded-full bg-green-50 px-2 py-1 text-xs font-medium text-green-700 ring-1 ring-inset ring-green-600/20">
-                    {{ucfirst($competition->status)}}
-                </span>
+
+                    @switch($competition->status)
+                        @case('planning')
+                            <x-label colour="orange">
+                                {{__('Planning')}}
+                            </x-label>
+                        @break
+
+                        @case('ongoing')
+                            <x-label colour="green">
+                                {{__('Ongoing')}}
+                            </x-label>
+                            @break
+
+                        @case('ended')
+                            <x-label colour="blue">
+                                {{__('Ended')}}
+                            </x-label>
+                            @break
+
+                        @case('unknown')
+                            <x-label colour="gray">
+                                {{__('Unknown')}}
+                            </x-label>
+                            @break
+                    @endswitch
                 </dd>
             </dl>
         </div>

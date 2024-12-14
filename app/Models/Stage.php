@@ -27,8 +27,8 @@ class Stage extends Model
         'competition_id' => 'integer',
         'type'           => StageType::class,
         'capacity'       => 'integer',
-        'starts_at'      => 'immutable_date',
-        'ends_at'        => 'immutable_date',
+        'starts_on'      => 'immutable_date',
+        'ends_on'        => 'immutable_date',
     ];
 
     // Attributes ----
