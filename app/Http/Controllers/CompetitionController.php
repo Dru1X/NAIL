@@ -42,7 +42,9 @@ class CompetitionController extends Controller
     {
         Gate::authorize('view', $competition);
 
-        return view('competitions.show', compact('competition'));
+        return view('competitions.show', [
+            'competition' => $this->competitionService->findCompetition($competition->id),
+        ]);
     }
 
     public function edit(Competition $competition): View
