@@ -53,4 +53,9 @@ class Competition extends Model
     {
         return $this->hasMany(Stage::class);
     }
+
+    public function entries(): HasMany
+    {
+        return $this->hasMany(Entry::class);
+    }
 }
