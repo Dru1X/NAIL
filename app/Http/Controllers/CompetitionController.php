@@ -5,13 +5,17 @@ namespace App\Http\Controllers;
 use App\Http\Requests\CompetitionRequest;
 use App\Models\Competition;
 use App\Services\CompetitionService;
+use App\Services\EntryService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\View\View;
 
 class CompetitionController extends Controller
 {
-    public function __construct(protected CompetitionService $competitionService) {}
+    public function __construct(
+        protected CompetitionService $competitionService,
+        protected EntryService       $entryService,
+    ) {}
 
     public function index(): View
     {
@@ -42,8 +46,12 @@ class CompetitionController extends Controller
     {
         Gate::authorize('view', $competition);
 
+        $competition = $this->competitionService->findCompetition($competition->id);
+        $entries     = $this->entryService->getCompetitionEntries($competition);
+
         return view('competitions.show', [
-            'competition' => $this->competitionService->findCompetition($competition->id),
+            'competition' => $competition,
+            'entries'     => $entries,
         ]);
     }
 

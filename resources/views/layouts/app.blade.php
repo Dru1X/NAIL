@@ -28,7 +28,7 @@
 
                         {{--Page Actions--}}
                         @isset($actions)
-                            <div class="text-right">
+                            <div class="flex justify-end space-x-4">
                                 {{$actions}}
                             </div>
                         @endisset

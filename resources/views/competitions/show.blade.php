@@ -6,13 +6,23 @@
     </x-slot>
 
     <x-slot name="actions">
-        <a href="{{route('competitions.edit', $competition)}}">
-            <x-primary-button>
-                Edit
+        <a href="{{route('competitions.entries.create', $competition)}}">
+            <x-primary-button
+                type="button"
+                :disabled="!$competition->entry_period->isInProgress() || $competition->entries_count >= $competition->stages[0]->capacity"
+            >
+                Enter
             </x-primary-button>
+        </a>
+
+        <a href="{{route('competitions.edit', $competition)}}">
+            <x-secondary-button type="button">
+                Edit
+            </x-secondary-button>
         </a>
     </x-slot>
 
+    {{--Key Dates and Values--}}
     <div class="pt-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="p-6 text-gray-900 dark:text-gray-100">
@@ -66,6 +76,15 @@
 
                         <div class="border-b sm:border-0 border-gray-100 dark:border-gray-700 px-4 py-6 sm:col-span-1 sm:px-0">
                             <dt class="text-sm/6 font-medium text-gray-900 dark:text-gray-200">
+                                League Entries
+                            </dt>
+                            <dd class="mt-1 text-sm/6 text-gray-700 dark:text-gray-400 sm:mt-2">
+                                {{$competition->entries_count}}
+                            </dd>
+                        </div>
+
+                        <div class="border-b sm:border-0 border-gray-100 dark:border-gray-700 px-4 py-6 sm:col-span-1 sm:px-0">
+                            <dt class="text-sm/6 font-medium text-gray-900 dark:text-gray-200">
                                 Playoff Spaces
                             </dt>
                             <dd class="mt-1 text-sm/6 text-gray-700 dark:text-gray-400 sm:mt-2">
@@ -81,52 +100,47 @@
     <div class="pt-6">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="p-6 text-gray-900 dark:text-gray-100">
-                <div class="w-full px-6 py-4 bg-white dark:bg-gray-800 shadow-md overflow-hidden sm:rounded-lg">
+                <div class="w-full bg-white dark:bg-gray-800 shadow-md overflow-hidden sm:rounded-lg">
 
-                    {{--Tabs--}}
-                    <nav class="border-b border-gray-200 dark:border-gray-700 pb-5 sm:pb-0">
-
-                        <!-- Tabs at small breakpoint and up -->
-                        <nav class="hidden space-x-8 sm:-my-px sm:flex sm:h-12">
-                            <x-nav-link :href="route('competitions.show', $competition)" :active="true">
-                                {{__('Table')}}
-                            </x-nav-link>
-
-                            <x-nav-link :href="route('competitions.show', $competition)" :active="false">
-                                {{__('Stats')}}
-                            </x-nav-link>
-
-                            <x-nav-link :href="route('competitions.show', $competition)" :active="false">
-                                {{__('Matches')}}
-                            </x-nav-link>
-                        </nav>
-
-                        <!-- Responsive menu -->
-                        <div class="grid grid-cols-1 sm:hidden">
-
-                            <!-- Use an "onChange" listener to redirect the user to the selected tab URL. -->
-                            <select
-                                aria-label="Select a tab"
-                                class="col-start-1 row-start-1 w-full appearance-none rounded-md bg-white py-2 pl-3 pr-8 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600">
-                                <option selected>Table</option>
-                                <option>Stats</option>
-                                <option>Matches</option>
-                            </select>
-                            <svg
-                                class="pointer-events-none col-start-1 row-start-1 mr-2 size-5 self-center justify-self-end fill-gray-500"
-                                viewBox="0 0 16 16" fill="currentColor" aria-hidden="true" data-slot="icon">
-                                <path
-                                    fill-rule="evenodd"
-                                    d="M4.22 6.22a.75.75 0 0 1 1.06 0L8 8.94l2.72-2.72a.75.75 0 1 1 1.06 1.06l-3.25 3.25a.75.75 0 0 1-1.06 0L4.22 7.28a.75.75 0 0 1 0-1.06Z"
-                                    clip-rule="evenodd"
-                                />
-                            </svg>
-                        </div>
-                    </nav>
-
-                    <div class="mt-6">
-                        Content to be added
+                    <div class="border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 px-4 py-5 sm:px-6">
+                        <h3 class="text-base font-semibold text-gray-900 dark:text-gray-200">All Entries</h3>
                     </div>
+
+
+                    <ul role="list" class="divide-y divide-gray-100 dark:divide-gray-700">
+                        @foreach($entries as $entry)
+                            <li class="flex justify-between gap-x-6 px-6 py-5">
+                                <div class="flex min-w-0 gap-x-4">
+                                    <img
+                                        class="size-12 flex-none rounded-full bg-gray-50 dark:bg-gray-800"
+                                        src="https://placehold.co/200x200?text={{$entry->person->initials}}"
+                                        alt="{{$entry->person->initials}}"
+                                    >
+                                    <div class="min-w-0 flex-auto">
+                                        <p class="text-sm/6 font-semibold text-gray-900 dark:text-gray-100">
+                                            <a href="{{route('people.show', $entry->person)}}" class="hover:underline">
+                                                {{$entry->person->full_name}}
+                                            </a>
+                                        </p>
+                                        <p class="mt-1 flex text-xs/5 text-gray-500 dark:text-gray-400">
+                                            {{$entry->bow_style->name}}
+                                        </p>
+                                    </div>
+                                </div>
+                                <div class="flex shrink-0 items-center gap-x-6">
+                                    <div class="hidden sm:flex sm:flex-col sm:items-end">
+                                        <p class="text-sm/6 text-gray-900 dark:text-gray-100">Current Handicap: {{$entry->current_handicap}}</p>
+                                        <p class="mt-1 text-xs/5 text-gray-500 dark:text-gray-400">Initial Handicap: {{$entry->initial_handicap}}</p>
+                                    </div>
+                                    <a href="{{route('competitions.entries.edit', [$competition, $entry])}}">
+                                        <x-secondary-button>
+                                            Edit
+                                        </x-secondary-button>
+                                    </a>
+                                </div>
+                            </li>
+                        @endforeach
+                    </ul>
                 </div>
             </div>
         </div>

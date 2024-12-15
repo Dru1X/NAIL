@@ -6,7 +6,7 @@ use App\Models\User;
 test('empty people list is displayed', function () {
     $user = User::factory()->create();
 
-    Person::truncate();
+    Person::query()->delete();
 
     $response = $this
         ->actingAs($user)
