@@ -14,7 +14,6 @@ class Standing extends Model
     protected $fillable = [
         'stage_id',
         'entry_id',
-        'handicap',
         'matches_played',
         'matches_won',
         'matches_drawn',
@@ -28,7 +27,6 @@ class Standing extends Model
     protected $casts = [
         'stage_id'              => 'integer',
         'entry_id'              => 'integer',
-        'handicap'              => 'integer',
         'matches_played'        => 'integer',
         'matches_won'           => 'integer',
         'matches_drawn'         => 'integer',

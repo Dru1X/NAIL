@@ -59,6 +59,6 @@ class Stage extends Model
             ->orderByDesc('bonus_points')
             ->orderByDesc('matches_won')
             ->orderByDesc('match_points_adjusted')
-            ->orderByAsc('id');
+            ->orderBy('id');
     }
 }

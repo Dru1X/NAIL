@@ -24,7 +24,6 @@ class StandingFactory extends Factory
         return [
             'stage_id'              => Stage::factory(),
             'entry_id'              => Entry::factory(),
-            'handicap'              => fake()->numberBetween(1, 150),
             'matches_played'        => $matchesPlayed,
             'matches_won'           => $matchesWon,
             'matches_drawn'         => $matchesDrawn,

@@ -11,6 +11,8 @@ use Illuminate\Support\Collection;
 
 class EntryService
 {
+    public function __construct(protected StandingService $standingService) {}
+
     // Lookup ----
 
     /**
@@ -63,6 +65,11 @@ class EntryService
         $entry->person()->associate($person);
 
         $entry->save();
+
+        $this->standingService->addStandingForStage(
+            $competition->stages()->first(),
+            $entry
+        );
 
         return $entry;
     }

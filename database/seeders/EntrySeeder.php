@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use App\Enums\StageType;
 use App\Models\Competition;
 use App\Models\Entry;
+use App\Models\Person;
 use App\Models\Standing;
 use Illuminate\Database\Seeder;
 
@@ -26,8 +27,7 @@ class EntrySeeder extends Seeder
 
             Entry::factory()
                 ->for($competition)
-                ->forPerson()
-                ->count(rand(10, 20))
+                ->count(rand(0, $leagueStage->capacity))
                 ->create()
                 ->each(function (Entry $entry) use ($leagueStage) {
                     Standing::factory()

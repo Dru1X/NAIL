@@ -13,7 +13,6 @@ return new class extends Migration {
             $table->foreignId('stage_id')->constrained('stages');
             $table->foreignId('entry_id')->constrained('entries');
 
-            $table->unsignedTinyInteger('handicap')->nullable();
             $table->unsignedTinyInteger('matches_played')->default(0);
             $table->unsignedTinyInteger('matches_won')->default(0);
             $table->unsignedTinyInteger('matches_drawn')->default(0);

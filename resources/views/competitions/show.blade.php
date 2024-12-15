@@ -106,6 +106,11 @@
                         <h3 class="text-base font-semibold text-gray-900 dark:text-gray-200">All Entries</h3>
                     </div>
 
+                    @if($entries->isEmpty())
+                        <div class="p-6 text-center">
+                            No entries yet.
+                        </div>
+                    @endif
 
                     <ul role="list" class="divide-y divide-gray-100 dark:divide-gray-700">
                         @foreach($entries as $entry)
