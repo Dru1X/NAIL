@@ -7,9 +7,9 @@
 
     <x-slot name="actions">
         <a href="{{route('people.edit', $person)}}">
-            <x-primary-button>
+            <x-secondary-button>
                 Edit
-            </x-primary-button>
+            </x-secondary-button>
         </a>
     </x-slot>
 

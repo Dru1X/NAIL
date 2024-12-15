@@ -32,6 +32,11 @@ class Competition extends Model
 
     // Attributes ----
 
+    public function entryPeriod(): Attribute
+    {
+        return Attribute::get(fn() => $this->entries_open_on->toPeriod($this->entries_close_on));
+    }
+
     public function period(): Attribute
     {
         return Attribute::get(fn() => $this->starts_on->toPeriod($this->ends_on));

@@ -7,15 +7,18 @@
 
     <x-slot name="actions">
         <a href="{{route('competitions.entries.create', $competition)}}">
-            <x-secondary-button type="button">
+            <x-primary-button
+                type="button"
+                :disabled="!$competition->entry_period->isInProgress() || $competition->entries_count >= $competition->stages[0]->capacity"
+            >
                 Enter
-            </x-secondary-button>
+            </x-primary-button>
         </a>
 
         <a href="{{route('competitions.edit', $competition)}}">
-            <x-primary-button type="button">
+            <x-secondary-button type="button">
                 Edit
-            </x-primary-button>
+            </x-secondary-button>
         </a>
     </x-slot>
 

@@ -26,7 +26,7 @@ class EntryService
         $entry = $competition->entries()->make([
             'bow_style'        => BowStyle::from($data['bow_style']),
             'initial_handicap' => $data['initial_handicap'],
-            'current_handicap' => $data['current_handicap'],
+            'current_handicap' => $data['current_handicap'] ?? $data['initial_handicap'],
         ]);
 
         $entry->person()->associate($person);
@@ -46,7 +46,7 @@ class EntryService
         $entry->fill([
             'bow_style'        => BowStyle::from($data['bow_style']),
             'initial_handicap' => $data['initial_handicap'],
-            'current_handicap' => $data['current_handicap'],
+            'current_handicap' => $data['current_handicap'] ?? $entry->current_handicap,
         ]);
 
         if($person->isNot($entry->person)) {
