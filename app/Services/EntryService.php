@@ -23,9 +23,11 @@ class EntryService
         return $competition
             ->entries()
             ->with('person')
-            ->orderBy('people.full_name')
-            ->orderBy('id')
-            ->get();
+            ->get()
+            ->sortBy([
+                ['person.full_name', 'asc'],
+                ['id', 'asc'],
+            ]);
     }
 
     /**
@@ -78,9 +80,9 @@ class EntryService
             'current_handicap' => $data['current_handicap'] ?? $entry->current_handicap,
         ]);
 
-        if($person->isNot($entry->person)) {
+        if ($person->isNot($entry->person)) {
 
-            if($entry->competition->entries()->wherePersonId($person->id)->exists()){
+            if ($entry->competition->entries()->wherePersonId($person->id)->exists()) {
                 throw new DomainException("A person cannot enter the same competition multiple times.");
             }
 
