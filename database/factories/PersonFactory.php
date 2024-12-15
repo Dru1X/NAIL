@@ -12,8 +12,8 @@ class PersonFactory extends Factory
 
     public function definition(): array
     {
-        $firstName = $this->faker->firstName();
-        $lastName  = $this->faker->lastName();
+        $firstName = fake()->firstName();
+        $lastName  = fake()->lastName();
 
         return [
             'first_name' => $firstName,
