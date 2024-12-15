@@ -32,7 +32,9 @@ test('populated competitions list is displayed', function () {
 test('competition information is displayed', function () {
     $user = User::factory()->create();
 
-    $competition = Competition::factory()->create();
+    $competition = Competition::factory()
+        ->hasStages(2)
+        ->create();
 
     $response = $this
         ->actingAs($user)
@@ -100,8 +102,11 @@ test('new competition can be added', function () {
 });
 
 test('competition editing form is displayed', function () {
-    $user        = User::factory()->create();
-    $competition = Competition::factory()->create();
+    $user = User::factory()->create();
+
+    $competition = Competition::factory()
+        ->hasStages(2)
+        ->create();
 
     $response = $this
         ->actingAs($user)
