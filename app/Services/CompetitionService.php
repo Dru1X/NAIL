@@ -25,7 +25,7 @@ class CompetitionService
     public function getCompetitions(): Collection
     {
         return Competition::query()
-            ->withCount('stages')
+            ->withCount(['stages', 'entries'])
             ->orderBy('starts_on', 'desc')
             ->orderBy('id')
             ->get();
@@ -37,7 +37,7 @@ class CompetitionService
     public function findCompetition(int $id): ?Competition
     {
         return Competition::with('stages')
-            ->withCount('stages')
+            ->withCount(['stages', 'entries'])
             ->find($id);
     }
 

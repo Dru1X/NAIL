@@ -17,7 +17,8 @@ class StageFactory extends Factory
 
     public function definition(): array
     {
-        $type = fake()->randomElement(StageType::cases());
+        $type     = fake()->randomElement(StageType::cases());
+        $capacity = $type == StageType::Playoff ? 8 : rand(10, 30);
 
         $startsOn = CarbonImmutable::make(
             fake()->dateTimeBetween('-5 years', '-2 months')
@@ -29,7 +30,7 @@ class StageFactory extends Factory
             'competition_id' => Competition::factory(),
             'name'           => ucfirst($type->value) . ' Stage',
             'type'           => $type,
-            'capacity'       => fake()->numberBetween(10, 100),
+            'capacity'       => $capacity,
             'starts_on'      => $startsOn,
             'ends_on'        => $endsOn,
             'created_at'     => Carbon::now(),

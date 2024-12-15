@@ -11,7 +11,6 @@ class EntryRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'competition_id'   => ['required', 'exists:competitions'],
             'person_id'        => ['required', 'exists:people'],
             'bow_style'        => ['required', Rule::enum(BowStyle::class)],
             'initial_handicap' => ['nullable', 'integer', 'min:0', 'max:150'],

@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\CompetitionController;
+use App\Http\Controllers\EntryController;
 use App\Http\Controllers\PersonController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
@@ -20,6 +21,7 @@ Route::middleware('auth')->group(function () {
 
     Route::resource('people', PersonController::class);
     Route::resource('competitions', CompetitionController::class);
+    Route::resource('competitions.entries', EntryController::class);
 });
 
 require __DIR__.'/auth.php';

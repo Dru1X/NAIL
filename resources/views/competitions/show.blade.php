@@ -6,8 +6,14 @@
     </x-slot>
 
     <x-slot name="actions">
+        <a href="{{route('competitions.entries.create', $competition)}}">
+            <x-secondary-button type="button">
+                Enter
+            </x-secondary-button>
+        </a>
+
         <a href="{{route('competitions.edit', $competition)}}">
-            <x-primary-button>
+            <x-primary-button type="button">
                 Edit
             </x-primary-button>
         </a>
@@ -61,6 +67,15 @@
                             </dt>
                             <dd class="mt-1 text-sm/6 text-gray-700 dark:text-gray-400 sm:mt-2">
                                 {{$competition->stages[0]->capacity}}
+                            </dd>
+                        </div>
+
+                        <div class="border-b sm:border-0 border-gray-100 dark:border-gray-700 px-4 py-6 sm:col-span-1 sm:px-0">
+                            <dt class="text-sm/6 font-medium text-gray-900 dark:text-gray-200">
+                                League Entries
+                            </dt>
+                            <dd class="mt-1 text-sm/6 text-gray-700 dark:text-gray-400 sm:mt-2">
+                                {{$competition->entries_count}}
                             </dd>
                         </div>
 
