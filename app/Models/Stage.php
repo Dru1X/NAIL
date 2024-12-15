@@ -51,4 +51,14 @@ class Stage extends Model
             ->orderBy('starts_on')
             ->orderBy('id');
     }
+
+    public function standings(): HasMany
+    {
+        return $this->hasMany(Standing::class)
+            ->orderByDesc('league_points')
+            ->orderByDesc('bonus_points')
+            ->orderByDesc('matches_won')
+            ->orderByDesc('match_points_adjusted')
+            ->orderByAsc('id');
+    }
 }
