@@ -13,9 +13,20 @@ use Illuminate\View\View;
 
 class EntryController extends Controller
 {
-    public function __construct(protected PersonService $personService, protected EntryService $entryService) {}
+    public function __construct(
+        protected PersonService $personService,
+        protected EntryService  $entryService,
+    ) {}
 
-    public function index(Competition $competition) {}
+    public function index(Competition $competition): View
+    {
+        $entries = $this->entryService->getCompetitionEntries($competition);
+
+        return view('competitions.entries.index', [
+            'competition' => $competition,
+            'entries'     => $entries,
+        ]);
+    }
 
     public function create(Competition $competition): View
     {
@@ -36,11 +47,41 @@ class EntryController extends Controller
         return redirect()->route('competitions.show', [$competition]);
     }
 
-    public function show(Competition $competition, Entry $entry) {}
+    public function show(Competition $competition, Entry $entry): View
+    {
+        $entry = $this->entryService->findCompetitionEntry($competition, $entry->id);
 
-    public function edit(Competition $competition, Entry $entry) {}
+        return view('competitions.entries.show', [
+            'competition' => $competition,
+            'entry'       => $entry,
+        ]);
+    }
 
-    public function update(EntryRequest $request, Competition $competition, Entry $entry) {}
+    public function edit(Competition $competition, Entry $entry): View
+    {
+        $people = $this->personService->getPeople();
+        $entry  = $this->entryService->findCompetitionEntry($competition, $entry->id);
 
-    public function destroy(Competition $competition, Entry $entry) {}
+        return view('competitions.entries.edit', [
+            'entry'       => $entry,
+            'competition' => $competition,
+            'entries'     => $competition->entries,
+            'people'      => $people,
+            'bowStyles'   => BowStyle::cases(),
+        ]);
+    }
+
+    public function update(EntryRequest $request, Competition $competition, Entry $entry): RedirectResponse
+    {
+        $this->entryService->updateEntry($entry, $request->validated());
+
+        return redirect()->route('competitions.show', [$competition]);
+    }
+
+    public function destroy(Competition $competition, Entry $entry): RedirectResponse
+    {
+        $this->entryService->withdrawFromCompetition($entry);
+
+        return redirect()->route('competitions.show', [$competition]);
+    }
 }

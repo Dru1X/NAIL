@@ -7,9 +7,38 @@ use App\Models\Competition;
 use App\Models\Entry;
 use App\Models\Person;
 use DomainException;
+use Illuminate\Support\Collection;
 
 class EntryService
 {
+    // Lookup ----
+
+    /**
+     * Get all entries to a competition
+     *
+     * @return Collection<int, Entry>
+     */
+    public function getCompetitionEntries(Competition $competition): Collection
+    {
+        return $competition
+            ->entries()
+            ->with('person')
+            ->orderBy('people.full_name')
+            ->orderBy('id')
+            ->get();
+    }
+
+    /**
+     * Find a single competition entry
+     */
+    public function findCompetitionEntry(Competition $competition, int $id): ?Entry
+    {
+        return $competition
+            ->entries()
+            ->with(['competition', 'person'])
+            ->find($id);
+    }
+
     // Management ----
 
     /**
