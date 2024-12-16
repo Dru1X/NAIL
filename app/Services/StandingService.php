@@ -2,16 +2,33 @@
 
 namespace App\Services;
 
+use App\Enums\StageType;
+use App\Models\Competition;
 use App\Models\Entry;
 use App\Models\Stage;
 use App\Models\Standing;
 use DomainException;
+use Illuminate\Support\Collection;
 use InvalidArgumentException;
 
 class StandingService
 {
     // Lookup ----
-    //
+
+    /**
+     * Get all league standings for a competition
+     *
+     * @return Collection<int, Standing>
+     */
+    public function getLeagueStandingsForCompetition(Competition $competition): Collection
+    {
+        $stage = $competition->stages->firstWhere('type', StageType::League);
+
+        return $stage
+            ->standings()
+            ->with(['entry', 'entry.person'])
+            ->get();
+    }
 
     // Management ----
 
@@ -32,4 +49,5 @@ class StandingService
             ->standings()
             ->create(['entry_id' => $entry->id]);
     }
+
 }

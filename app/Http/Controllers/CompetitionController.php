@@ -6,6 +6,7 @@ use App\Http\Requests\CompetitionRequest;
 use App\Models\Competition;
 use App\Services\CompetitionService;
 use App\Services\EntryService;
+use App\Services\StandingService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\View\View;
@@ -15,6 +16,7 @@ class CompetitionController extends Controller
     public function __construct(
         protected CompetitionService $competitionService,
         protected EntryService       $entryService,
+        protected StandingService    $standingService,
     ) {}
 
     public function index(): View
@@ -48,10 +50,12 @@ class CompetitionController extends Controller
 
         $competition = $this->competitionService->findCompetition($competition->id);
         $entries     = $this->entryService->getCompetitionEntries($competition);
+        $standings   = $this->standingService->getLeagueStandingsForCompetition($competition);
 
         return view('competitions.show', [
             'competition' => $competition,
             'entries'     => $entries,
+            'standings'   => $standings,
         ]);
     }
 

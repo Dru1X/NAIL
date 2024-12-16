@@ -36,7 +36,7 @@ class CompetitionService
      */
     public function findCompetition(int $id): ?Competition
     {
-        return Competition::with('stages')
+        return Competition::with(['stages', 'stages.standings'])
             ->withCount(['stages', 'entries'])
             ->find($id);
     }

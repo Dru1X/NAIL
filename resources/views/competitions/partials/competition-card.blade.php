@@ -22,8 +22,8 @@
 
             {{--Description and Status--}}
             <dl class="mt-1 flex grow flex-col justify-between">
-                <dt class="sr-only">Stages</dt>
-                <dd class="text-sm text-gray-500">{{$competition->stages_count}} stages</dd>
+                <dt class="sr-only">Entries</dt>
+                <dd class="text-sm text-gray-500">{{$competition->entries_count}} {{Str::plural('entry', $competition->entries_count)}}</dd>
 
                 <dt class="sr-only">Status</dt>
                 <dd class="mt-3">
