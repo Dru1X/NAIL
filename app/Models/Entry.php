@@ -32,14 +32,19 @@ class Entry extends Model
 
     // Relationships ----
 
+    public function person(): BelongsTo
+    {
+        return $this->belongsTo(Person::class);
+    }
+
     public function competition(): BelongsTo
     {
         return $this->belongsTo(Competition::class);
     }
 
-    public function person(): BelongsTo
+    public function scores(): HasMany
     {
-        return $this->belongsTo(Person::class);
+        return $this->hasMany(Score::class);
     }
 
     public function standings(): HasMany
