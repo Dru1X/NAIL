@@ -55,7 +55,7 @@ class Stage extends Model
     public function standings(): HasMany
     {
         return $this->hasMany(Standing::class)
-            ->orderByDesc('league_points')
+            ->orderByDesc('total_points')
             ->orderByDesc('bonus_points')
             ->orderByDesc('matches_won')
             ->orderByDesc('match_points_adjusted')

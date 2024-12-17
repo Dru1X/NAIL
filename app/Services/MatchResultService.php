@@ -34,7 +34,11 @@ class MatchResultService
 
     // Setup ----
 
-    public function __construct(protected HandicapService $handicapService) {}
+    public function __construct(
+        protected EntryService $entryService,
+        protected HandicapService $handicapService,
+        protected StandingService $standingService,
+    ) {}
 
     // Lookup ----
 
@@ -115,6 +119,9 @@ class MatchResultService
 
             // Store the result
             $match->save();
+
+            // Aggregate the match result into the standings for the competitors
+            $this->standingService->applyMatchResult($match);
 
             return $match;
         });

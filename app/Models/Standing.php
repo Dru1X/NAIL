@@ -22,6 +22,7 @@ class Standing extends Model
         'match_points_adjusted',
         'bonus_points',
         'league_points',
+        'total_points',
     ];
 
     protected $casts = [
@@ -35,6 +36,7 @@ class Standing extends Model
         'match_points_adjusted' => 'integer',
         'bonus_points'          => 'integer',
         'league_points'         => 'integer',
+        'total_points'          => 'integer',
     ];
 
     // Relationships ----

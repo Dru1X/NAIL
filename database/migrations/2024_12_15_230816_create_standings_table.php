@@ -21,6 +21,7 @@ return new class extends Migration {
             $table->unsignedMediumInteger('match_points_adjusted')->default(0);
             $table->unsignedTinyInteger('bonus_points')->default(0);
             $table->unsignedTinyInteger('league_points')->default(0);
+            $table->unsignedTinyInteger('total_points')->default(0);
 
             $table->timestamps();
             $table->softDeletes();
