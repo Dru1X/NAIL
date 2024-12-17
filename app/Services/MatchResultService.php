@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Models\Competition;
 use App\Models\Entry;
 use App\Models\Handicap;
 use App\Models\MatchResult;
@@ -31,10 +32,50 @@ class MatchResultService
 
     public const int CLOSE_LOSS_THRESHOLD = 5;
 
+    // Setup ----
+
     public function __construct(protected HandicapService $handicapService) {}
 
     // Lookup ----
-    //
+
+    /**
+     * Get all match results for the given competition
+     *
+     * @return Collection<int, MatchResult>
+     */
+    public function getMatchResultsForCompetition(Competition $competition): Collection
+    {
+        return MatchResult::inCompetition($competition)
+            ->orderBy('shot_at')
+            ->orderBy('id')
+            ->get();
+    }
+
+    /**
+     * Get all match results for the given stage
+     *
+     * @return Collection<int, MatchResult>
+     */
+    public function getMatchResultsForStage(Stage $stage): Collection
+    {
+        return MatchResult::inStage($stage)
+            ->orderBy('shot_at')
+            ->orderBy('id')
+            ->get();
+    }
+
+    /**
+     * Get all match results for the given round
+     *
+     * @return Collection<int, MatchResult>
+     */
+    public function getMatchResultsForRound(Round $round): Collection
+    {
+        return MatchResult::whereRoundId($round->id)
+            ->orderBy('shot_at')
+            ->orderBy('id')
+            ->get();
+    }
 
     // Management ----
 

@@ -67,6 +67,16 @@ class MatchResult extends Model
     // Scopes ----
 
     /** @noinspection PhpUnused */
+    public function scopeInCompetition(Builder $query, Competition $competition): Builder
+    {
+        return $query->whereHas('round', fn(Builder|Round $round) => $round
+            ->whereHas('stage', fn(Builder|Stage $stage) => $stage
+                ->whereCompetitionId($competition->id)
+            )
+        );
+    }
+
+    /** @noinspection PhpUnused */
     public function scopeInStage(Builder $query, Stage $stage): Builder
     {
         return $query->whereHas('round', fn(Builder|Round $round) => $round->whereStageId($stage->id));
