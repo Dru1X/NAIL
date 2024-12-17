@@ -16,9 +16,6 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 
-/// TODO: Handle side-effects:
-///  - League standings
-///  - Entry handicap updates
 class MatchResultService
 {
     // Constants ----
@@ -129,6 +126,8 @@ class MatchResultService
 
     /**
      * Update an existing match result
+     *
+     * This does not currently cause an update to the standings!
      */
     public function updateMatchResult(MatchResult $match, array $data): MatchResult
     {
@@ -245,11 +244,17 @@ class MatchResultService
 
         $score->save();
 
+        if($score->handicap_after < $score->handicap_before) {
+            $this->entryService->improveEntryHandicap($entry, $newHandicap->number);
+        }
+
         return $score;
     }
 
     /**
      * Update an existing individual score for a match competitor
+     *
+     * This does not currently cause an update to the entry's current handicap!
      */
     protected function updateScore(Score $score, array $data): Score
     {

@@ -102,6 +102,20 @@ class EntryService
     }
 
     /**
+     * Improve the current handicap held for an entry
+     */
+    public function improveEntryHandicap(Entry $entry, int $newHandicap): Entry
+    {
+        if($newHandicap >= $entry->current_handicap) {
+            throw new DomainException("An improved handicap is always a lower number");
+        }
+
+        $entry->update(['current_handicap' => $newHandicap]);
+
+        return $entry;
+    }
+
+    /**
      * Withdraw from a competition by removing an entry
      */
     public function withdrawFromCompetition(Entry $entry): bool
