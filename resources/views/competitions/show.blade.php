@@ -88,6 +88,38 @@
         </div>
     </div>
 
+    {{--League Table--}}
+    @if($standings->isNotEmpty() && $competition->status !== 'planning')
+        <div class="pt-6">
+            <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+                <div class="p-6 text-gray-900 dark:text-gray-100">
+                    <div class="w-full bg-white dark:bg-gray-800 shadow-md overflow-hidden sm:rounded-lg">
+
+                        <div class="border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 px-4 py-5 sm:px-6">
+                            <div class="-ml-4 -mt-4 flex flex-wrap items-center justify-between sm:flex-nowrap">
+                                <div class="ml-4 mt-4">
+                                    <h3 class="text-base font-semibold text-gray-900 dark:text-gray-100">
+                                        League Table
+                                    </h3>
+                                    <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">
+                                        Last updated {{$standings->max('updated_at')->toFormattedDateString()}}
+                                    </p>
+                                </div>
+                                <div class="ml-4 mt-4 shrink-0">
+                                    {{--                                    <x-primary-button>--}}
+                                    {{--                                      Match--}}
+                                    {{--                                    </x-primary-button>--}}
+                                </div>
+                            </div>
+                        </div>
+
+                        @include('competitions.partials.league-table')
+                    </div>
+                </div>
+            </div>
+        </div>
+    @endif
+
     {{--Entries--}}
     <div class="pt-6">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
@@ -161,36 +193,4 @@
             </div>
         </div>
     </div>
-
-    {{--League Table--}}
-    @if($standings->isNotEmpty())
-        <div class="pt-6">
-            <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-                <div class="p-6 text-gray-900 dark:text-gray-100">
-                    <div class="w-full bg-white dark:bg-gray-800 shadow-md overflow-hidden sm:rounded-lg">
-
-                        <div class="border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 px-4 py-5 sm:px-6">
-                            <div class="-ml-4 -mt-4 flex flex-wrap items-center justify-between sm:flex-nowrap">
-                                <div class="ml-4 mt-4">
-                                    <h3 class="text-base font-semibold text-gray-900 dark:text-gray-100">
-                                        League Table
-                                    </h3>
-                                    <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">
-                                        Last updated {{$standings->max('updated_at')->toFormattedDateString()}}
-                                    </p>
-                                </div>
-                                <div class="ml-4 mt-4 shrink-0">
-                                    <x-primary-button>
-                                      Match
-                                    </x-primary-button>
-                                </div>
-                            </div>
-                        </div>
-
-                        @include('competitions.partials.league-table')
-                    </div>
-                </div>
-            </div>
-        </div>
-    @endif
 </x-app-layout>
