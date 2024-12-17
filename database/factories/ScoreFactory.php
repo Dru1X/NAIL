@@ -5,7 +5,7 @@ namespace Database\Factories;
 use App\Models\Entry;
 use App\Models\Handicap;
 use App\Models\Score;
-use App\Services\MatchService;
+use App\Services\MatchResultService;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Carbon;
 
@@ -43,21 +43,21 @@ class ScoreFactory extends Factory
     public function win(): self
     {
         return $this->state(fn() => [
-            'league_points' => MatchService::LEAGUE_POINTS_FOR_WIN,
+            'league_points' => MatchResultService::LEAGUE_POINTS_FOR_WIN,
         ]);
     }
 
     public function draw(): self
     {
         return $this->state(fn() => [
-            'league_points' => MatchService::LEAGUE_POINTS_FOR_DRAW,
+            'league_points' => MatchResultService::LEAGUE_POINTS_FOR_DRAW,
         ]);
     }
 
     public function loss(): self
     {
         return $this->state(fn() => [
-            'league_points' => MatchService::LEAGUE_POINTS_FOR_LOSS,
+            'league_points' => MatchResultService::LEAGUE_POINTS_FOR_LOSS,
         ]);
     }
 }

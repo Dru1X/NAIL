@@ -10,6 +10,7 @@ use App\Models\Score;
 use App\Models\Stage;
 use Carbon\CarbonImmutable;
 use Carbon\CarbonInterface;
+use DomainException;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
@@ -17,7 +18,7 @@ use Illuminate\Support\Facades\DB;
 /// TODO: Handle side-effects:
 ///  - League standings
 ///  - Entry handicap updates
-class MatchService
+class MatchResultService
 {
     // Constants ----
 
@@ -60,6 +61,10 @@ class MatchService
             $rightScore = $this->recordScore($data['right_score']);
             $match->rightScore()->associate($rightScore);
 
+            // Apply domain rules
+            $this->preventSoloMatches($leftScore, $rightScore);
+            $this->preventDuplicateMatches($stage, $leftScore, $rightScore);
+
             // Handle a drawn on decisive match outcome
             if ($leftScore->match_points_adjusted === $rightScore->match_points_adjusted) {
                 $this->handleDrawnMatch($match, $leftScore, $rightScore);
@@ -91,6 +96,10 @@ class MatchService
             // Update the individual scores
             $leftScore  = $this->updateScore($match->leftScore, $data['left_score']);
             $rightScore = $this->updateScore($match->rightScore, $data['right_score']);
+
+            // Apply domain rules
+            $this->preventSoloMatches($leftScore, $rightScore);
+            $this->preventDuplicateMatches($stage, $leftScore, $rightScore);
 
             // Handle a drawn on decisive match outcome
             if ($leftScore->match_points_adjusted === $rightScore->match_points_adjusted) {
@@ -132,6 +141,31 @@ class MatchService
             ->whereDate('starts_on', '<=', $shotAt)
             ->whereDate('ends_on', '>=', $shotAt)
             ->firstOrFail();
+    }
+
+    /**
+     * Prevent matches that involve the same person on both sides
+     */
+    protected function preventSoloMatches(Score $leftScore, Score $rightScore): void
+    {
+        if ($leftScore->entry->is($rightScore->entry)) {
+            throw new DomainException("A match must involve two different people");
+        }
+    }
+
+    /**
+     * Prevent the same two people competing against each other more than once in the same stage
+     */
+    protected function preventDuplicateMatches(Stage $stage, Score $leftScore, Score $rightScore, ?MatchResult $exclude = null): void
+    {
+        $isDuplicateMatch = MatchResult::inStage($stage)
+            ->shotByBoth($leftScore->entry, $rightScore->entry)
+            ->when($exclude, fn(Builder|MatchResult $match) => $match->whereNot('id', $exclude->id))
+            ->exists();
+
+        if($isDuplicateMatch) {
+            throw new DomainException("Two people may only compete against each other once per stage");
+        }
     }
 
     /**

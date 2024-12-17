@@ -67,8 +67,48 @@ class MatchResult extends Model
     // Scopes ----
 
     /** @noinspection PhpUnused */
+    public function scopeInStage(Builder $query, Stage $stage): Builder
+    {
+        return $query->whereHas('round', fn(Builder|Round $round) => $round->whereStageId($stage->id));
+    }
+
+    /** @noinspection PhpUnused */
+    public function scopeInRound(Builder $query, Round $round): Builder
+    {
+        return $query->where('round_id', $round->id);
+    }
+
+    /** @noinspection PhpUnused */
     public function scopeShotBefore(Builder $query, CarbonInterface $dateTime): Builder
     {
         return $query->where('shot_at', '<', $dateTime);
+    }
+
+    /** @noinspection PhpUnused */
+    public function scopeShotBy(Builder $query, Entry $entry): Builder
+    {
+        return $query->where(fn(Builder|self $match) => $match
+            ->whereHas('leftScore', fn(Builder|Score $score) => $score
+                ->where('entry_id', $entry->id)
+            )
+            ->orWhereHas('rightScore', fn(Builder|Score $score) => $score
+                ->where('entry_id', $entry->id)
+            )
+        );
+    }
+
+    /** @noinspection PhpUnused */
+    public function scopeShotByBoth(Builder $query, Entry $firstEntry, Entry $secondEntry): Builder
+    {
+        return $query->where(fn(Builder|self $match) => $match
+            ->whereHas('leftScore', fn(Builder|Score $score) => $score
+                ->where('entry_id', $firstEntry->id)
+                ->orWhere('entry_id', $secondEntry->id)
+            )
+            ->whereHas('rightScore', fn(Builder|Score $score) => $score
+                ->where('entry_id', $firstEntry->id)
+                ->orWhere('entry_id', $secondEntry->id)
+            )
+        );
     }
 }
