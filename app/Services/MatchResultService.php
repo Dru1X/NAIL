@@ -32,7 +32,7 @@ class MatchResultService
     // Setup ----
 
     public function __construct(
-        protected EntryService $entryService,
+        protected EntryService    $entryService,
         protected HandicapService $handicapService,
         protected StandingService $standingService,
     ) {}
@@ -83,13 +83,14 @@ class MatchResultService
     /**
      * Record a new match result
      */
-    public function recordMatchResult(array $data): MatchResult
+    public function recordMatchResult(Stage $stage, array $data): MatchResult
     {
-        return DB::transaction(function () use ($data): MatchResult {
+        return DB::transaction(function () use ($stage, $data): MatchResult {
 
-            $stage  = Stage::findOrFail($data['stage_id']);
+            // Parse the match date/time
             $shotAt = CarbonImmutable::make($data['shot_at']);
 
+            // Make a new match result
             $match = MatchResult::make(['shot_at' => $shotAt]);
 
             // Determine the round in which this match took place
@@ -129,11 +130,11 @@ class MatchResultService
      *
      * This does not currently cause an update to the standings!
      */
-    public function updateMatchResult(MatchResult $match, array $data): MatchResult
+    public function updateMatchResult(MatchResult $match, Stage $stage, array $data): MatchResult
     {
-        return DB::transaction(function () use ($match, $data): MatchResult {
+        return DB::transaction(function () use ($match, $stage, $data): MatchResult {
 
-            $stage  = Stage::findOrFail($data['stage_id']);
+            // Parse the match date/time
             $shotAt = CarbonImmutable::make($data['shot_at']);
 
             // Determine the round in which this match took place
@@ -210,7 +211,7 @@ class MatchResultService
             ->when($exclude, fn(Builder|MatchResult $match) => $match->whereNot('id', $exclude->id))
             ->exists();
 
-        if($isDuplicateMatch) {
+        if ($isDuplicateMatch) {
             throw new DomainException("Two people may only compete against each other once per stage");
         }
     }
@@ -244,7 +245,7 @@ class MatchResultService
 
         $score->save();
 
-        if($score->handicap_after < $score->handicap_before) {
+        if ($score->handicap_after < $score->handicap_before) {
             $this->entryService->improveEntryHandicap($entry, $newHandicap->number);
         }
 
