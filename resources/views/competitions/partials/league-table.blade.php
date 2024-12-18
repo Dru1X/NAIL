@@ -25,20 +25,20 @@
                         <td class="whitespace-nowrap py-4 pl-5 pr-3 text-center text-sm font-medium text-gray-700 dark:text-gray-200">
                             @if($index == 0)
                                 <span class="inline-flex items-center rounded-md bg-yellow-400/10 px-2 py-1 text-xs font-medium text-yellow-400 ring-1 ring-inset ring-yellow-400/30">
-                                                        1
-                                                    </span>
+                                    1
+                                </span>
                             @elseif($index == 1)
                                 <span class="inline-flex items-center rounded-md bg-gray-400/10 px-2 py-1 text-xs font-medium text-gray-400 ring-1 ring-inset ring-gray-400/30">
-                                                        2
-                                                    </span>
+                                    2
+                                </span>
                             @elseif($index == 2)
                                 <span class="inline-flex items-center rounded-md bg-orange-400/10 px-2 py-1 text-xs font-medium text-orange-400 ring-1 ring-inset ring-orange-400/30">
-                                                        3
-                                                    </span>
+                                    3
+                                </span>
                             @elseif($index <= 7)
                                 <span class="inline-flex items-center rounded-md bg-green-400/10 px-2 py-1 text-xs font-medium text-green-400 ring-1 ring-inset ring-green-400/30">
-                                                        {{$index + 1}}
-                                                    </span>
+                                    {{$index + 1}}
+                                </span>
                             @else
                                 {{$index + 1}}
                             @endif
@@ -53,7 +53,7 @@
                         <td class="whitespace-nowrap px-3 py-5 text-right text-sm text-gray-500 dark:text-gray-400">{{number_format($standing->match_points)}}</td>
                         <td class="whitespace-nowrap px-3 py-5 text-right text-sm text-gray-500 dark:text-gray-400">{{number_format($standing->match_points_adjusted)}}</td>
                         <td class="whitespace-nowrap px-3 py-5 text-right text-sm text-gray-500 dark:text-gray-400">{{$standing->bonus_points}}</td>
-                        <td class="whitespace-nowrap px-3 py-5 text-center text-lg text-gray-700 dark:text-gray-200">{{$standing->league_points}}</td>
+                        <td class="whitespace-nowrap px-3 py-5 text-center text-lg text-gray-700 dark:text-gray-200">{{$standing->total_points}}</td>
                     </tr>
                 @endforeach
                 </tbody>

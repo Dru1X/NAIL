@@ -54,6 +54,7 @@ class CompetitionController extends Controller
 
         return view('competitions.show', [
             'competition' => $competition,
+            'stages'      => $competition->stages,
             'entries'     => $entries,
             'standings'   => $standings,
         ]);

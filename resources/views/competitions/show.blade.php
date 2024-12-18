@@ -43,7 +43,7 @@
                                 League Starts
                             </dt>
                             <dd class="mt-1 text-sm/6 text-gray-700 dark:text-gray-400 sm:mt-2">
-                                {{$competition->stages[0]->starts_on->toFormattedDateString()}}
+                                {{$stages[0]->starts_on->toFormattedDateString()}}
                             </dd>
                         </div>
 
@@ -52,7 +52,7 @@
                                 Playoff Date
                             </dt>
                             <dd class="mt-1 text-sm/6 text-gray-700 dark:text-gray-400 sm:mt-2">
-                                {{$competition->stages[1]->starts_on->toFormattedDateString()}}
+                                {{$stages[1]->starts_on->toFormattedDateString()}}
                             </dd>
                         </div>
 
@@ -79,7 +79,7 @@
                                 Playoff Spaces
                             </dt>
                             <dd class="mt-1 text-sm/6 text-gray-700 dark:text-gray-400 sm:mt-2">
-                                {{$competition->stages[1]->capacity}}
+                                {{$stages[1]->capacity}}
                             </dd>
                         </div>
                     </dl>
@@ -106,9 +106,11 @@
                                     </p>
                                 </div>
                                 <div class="ml-4 mt-4 shrink-0">
-                                    {{--                                    <x-primary-button>--}}
-                                    {{--                                      Match--}}
-                                    {{--                                    </x-primary-button>--}}
+                                    <a href="{{route('competitions.stages.matches.create', [$competition, $stages[0]])}}">
+                                        <x-primary-button>
+                                            Match
+                                        </x-primary-button>
+                                    </a>
                                 </div>
                             </div>
                         </div>
