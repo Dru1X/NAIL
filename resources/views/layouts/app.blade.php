@@ -36,6 +36,11 @@
                 </header>
             @endisset
 
+            <!-- Breadcrumbs -->
+            @isset($breadcrumbs)
+                {{$breadcrumbs}}
+            @endisset
+
             <!-- Page Content -->
             <main>
                 {{ $slot }}

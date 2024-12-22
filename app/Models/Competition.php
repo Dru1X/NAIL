@@ -42,6 +42,11 @@ class Competition extends Model
         return Attribute::get(fn() => $this->starts_on->toPeriod($this->ends_on));
     }
 
+    public function isFull(): Attribute
+    {
+        return Attribute::get(fn() => $this->entries()->count() >= $this->stages()->first()->capacity);
+    }
+
     public function status(): Attribute
     {
         return Attribute::get(fn() => match (true) {

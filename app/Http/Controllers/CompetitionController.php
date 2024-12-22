@@ -6,6 +6,7 @@ use App\Http\Requests\CompetitionRequest;
 use App\Models\Competition;
 use App\Services\CompetitionService;
 use App\Services\EntryService;
+use App\Services\MatchResultService;
 use App\Services\StandingService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Gate;
@@ -16,6 +17,7 @@ class CompetitionController extends Controller
     public function __construct(
         protected CompetitionService $competitionService,
         protected EntryService       $entryService,
+        protected MatchResultService $matchResultService,
         protected StandingService    $standingService,
     ) {}
 
@@ -51,12 +53,16 @@ class CompetitionController extends Controller
         $competition = $this->competitionService->findCompetition($competition->id);
         $entries     = $this->entryService->getCompetitionEntries($competition);
         $standings   = $this->standingService->getLeagueStandingsForCompetition($competition);
+        $matches     = $this->matchResultService->getRecentMatchResultsForCompetition($competition);
+        $matchCount  = $this->matchResultService->countMatchResultsForCompetition($competition);
 
         return view('competitions.show', [
             'competition' => $competition,
             'stages'      => $competition->stages,
             'entries'     => $entries,
             'standings'   => $standings,
+            'matches'     => $matches,
+            'matchCount'  => $matchCount,
         ]);
     }
 

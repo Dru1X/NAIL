@@ -6,6 +6,16 @@
     </x-slot>
 
     <x-slot name="actions">
+        <a href="{{route('competitions.stages.matches.index', [$competition, $stages[0]])}}">
+            <x-secondary-button>
+                {{__('Matches')}}
+            </x-secondary-button>
+        </a>
+        <a href="{{route('competitions.entries.index', $competition)}}">
+            <x-secondary-button>
+                {{__('Entries')}}
+            </x-secondary-button>
+        </a>
         <a href="{{route('competitions.edit', $competition)}}">
             <x-secondary-button type="button">
                 Edit
@@ -67,7 +77,15 @@
 
                         <div class="border-b sm:border-0 border-gray-100 dark:border-gray-700 px-4 py-6 sm:col-span-1 sm:px-0">
                             <dt class="text-sm/6 font-medium text-gray-900 dark:text-gray-200">
-                                League Entries
+                                <a href="{{route('competitions.entries.index', $competition)}}" class="flex items-center space-x-1">
+                                    <span>League Entries</span>
+                                    <span class="text-gray-700 dark:text-gray-400">
+                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" class="size-4">
+                                            <path fill-rule="evenodd" d="M8.914 6.025a.75.75 0 0 1 1.06 0 3.5 3.5 0 0 1 0 4.95l-2 2a3.5 3.5 0 0 1-5.396-4.402.75.75 0 0 1 1.251.827 2 2 0 0 0 3.085 2.514l2-2a2 2 0 0 0 0-2.828.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" />
+                                            <path fill-rule="evenodd" d="M7.086 9.975a.75.75 0 0 1-1.06 0 3.5 3.5 0 0 1 0-4.95l2-2a3.5 3.5 0 0 1 5.396 4.402.75.75 0 0 1-1.251-.827 2 2 0 0 0-3.085-2.514l-2 2a2 2 0 0 0 0 2.828.75.75 0 0 1 0 1.06Z" clip-rule="evenodd" />
+                                        </svg>
+                                    </span>
+                                </a>
                             </dt>
                             <dd class="mt-1 text-sm/6 text-gray-700 dark:text-gray-400 sm:mt-2">
                                 {{$competition->entries_count}}
@@ -105,13 +123,6 @@
                                         Last updated {{$standings->max('updated_at')->toFormattedDateString()}}
                                     </p>
                                 </div>
-                                <div class="ml-4 mt-4 shrink-0">
-                                    <a href="{{route('competitions.stages.matches.create', [$competition, $stages[0]])}}">
-                                        <x-primary-button>
-                                            Match
-                                        </x-primary-button>
-                                    </a>
-                                </div>
                             </div>
                         </div>
 
@@ -122,7 +133,7 @@
         </div>
     @endif
 
-    {{--Entries--}}
+    {{--Recent Matches--}}
     <div class="pt-6">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="p-6 text-gray-900 dark:text-gray-100">
@@ -132,65 +143,36 @@
                         <div class="-ml-4 -mt-4 flex flex-wrap items-center justify-between sm:flex-nowrap">
                             <div class="ml-4 mt-4">
                                 <h3 class="text-base font-semibold text-gray-900 dark:text-gray-100">
-                                    All Entries
+                                    {{__('Recent Matches')}}
+                                    <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">
+                                        {{$matchCount}} {{Str::plural('match result', $matchCount)}} {{__('recorded')}}
+                                    </p>
                                 </h3>
-                                <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">
-                                    Entries are currently {{$competition->entry_period->isInProgress()? 'open' : 'closed'}}
-                                </p>
                             </div>
-                            <div class="ml-4 mt-4 shrink-0">
-                                <a href="{{route('competitions.entries.create', $competition)}}">
-                                    <x-primary-button
-                                        type="button"
-                                        :disabled="!$competition->entry_period->isInProgress() || $competition->entries_count >= $competition->stages[0]->capacity"
-                                    >
-                                        Enter
+                            <div class="ml-4 mt-4 shrink-0 space-x-2">
+                                <a href="{{route('competitions.stages.matches.create', [$competition, $stages[0]])}}">
+                                    <x-primary-button>
+                                        {{__('Record')}}
                                     </x-primary-button>
+                                </a>
+                                <a href="{{route('competitions.stages.matches.index', [$competition, $stages[0]])}}">
+                                    <x-secondary-button>
+                                        {{__('History')}}
+                                    </x-secondary-button>
                                 </a>
                             </div>
                         </div>
                     </div>
 
-                    @if($entries->isEmpty())
-                        <div class="p-6 text-center">
-                            No entries yet.
-                        </div>
-                    @endif
-
-                    <ul role="list" class="divide-y divide-gray-100 dark:divide-gray-700">
-                        @foreach($entries as $entry)
-                            <li class="flex justify-between gap-x-6 px-6 py-5">
-                                <div class="flex min-w-0 gap-x-4">
-                                    <img
-                                        class="size-12 flex-none rounded-full bg-gray-50 dark:bg-gray-800"
-                                        src="https://placehold.co/200x200?text={{$entry->person->initials}}"
-                                        alt="{{$entry->person->initials}}"
-                                    >
-                                    <div class="min-w-0 flex-auto">
-                                        <p class="text-sm/6 font-semibold text-gray-900 dark:text-gray-100">
-                                            <a href="{{route('people.show', $entry->person)}}" class="hover:underline">
-                                                {{$entry->person->full_name}}
-                                            </a>
-                                        </p>
-                                        <p class="mt-1 flex text-xs/5 text-gray-500 dark:text-gray-400">
-                                            {{$entry->bow_style->name}}
-                                        </p>
-                                    </div>
-                                </div>
-                                <div class="flex shrink-0 items-center gap-x-6">
-                                    <div class="hidden sm:flex sm:flex-col sm:items-end">
-                                        <p class="text-sm/6 text-gray-900 dark:text-gray-100">Current Handicap: {{$entry->current_handicap}}</p>
-                                        <p class="mt-1 text-xs/5 text-gray-500 dark:text-gray-400">Initial Handicap: {{$entry->initial_handicap}}</p>
-                                    </div>
-                                    <a href="{{route('competitions.entries.edit', [$competition, $entry])}}">
-                                        <x-secondary-button>
-                                            Edit
-                                        </x-secondary-button>
-                                    </a>
-                                </div>
-                            </li>
-                        @endforeach
-                    </ul>
+                    <div class="pb-5 sm:pb-6">
+                        <ul class="flex-col space-y-4 divide-y dark:divide-gray-700">
+                            @foreach($matches as $match)
+                                <li class="pt-2">
+                                    <x-match-result :match="$match"/>
+                                </li>
+                            @endforeach
+                        </ul>
+                    </div>
                 </div>
             </div>
         </div>

@@ -40,6 +40,14 @@ class MatchResultService
     // Lookup ----
 
     /**
+     * Count all match results for the given competition
+     */
+    public function countMatchResultsForCompetition(Competition $competition): int
+    {
+        return MatchResult::inCompetition($competition)->count();
+    }
+
+    /**
      * Get all match results for the given competition
      *
      * @return Collection<int, MatchResult>
@@ -49,6 +57,25 @@ class MatchResultService
         return MatchResult::inCompetition($competition)
             ->orderBy('shot_at')
             ->orderBy('id')
+            ->get();
+    }
+
+    /**
+     * Get recent match results for the given competition
+     *
+     * @return Collection<int, MatchResult>
+     */
+    public function getRecentMatchResultsForCompetition(Competition $competition): Collection
+    {
+        return MatchResult::inCompetition($competition)
+            ->with([
+                'winner',
+                'leftScore', 'leftScore.entry', 'leftScore.entry.person',
+                'rightScore', 'rightScore.entry', 'rightScore.entry.person',
+            ])
+            ->orderByDesc('shot_at')
+            ->orderBy('id')
+            ->limit(6)
             ->get();
     }
 
