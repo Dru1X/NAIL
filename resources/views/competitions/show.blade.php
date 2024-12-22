@@ -6,6 +6,16 @@
     </x-slot>
 
     <x-slot name="actions">
+        <a href="{{route('competitions.stages.matches.index', [$competition, $stages[0]])}}">
+            <x-secondary-button>
+                {{__('Matches')}}
+            </x-secondary-button>
+        </a>
+        <a href="{{route('competitions.entries.index', $competition)}}">
+            <x-secondary-button>
+                {{__('Entries')}}
+            </x-secondary-button>
+        </a>
         <a href="{{route('competitions.edit', $competition)}}">
             <x-secondary-button type="button">
                 Edit
@@ -69,10 +79,12 @@
                             <dt class="text-sm/6 font-medium text-gray-900 dark:text-gray-200">
                                 <a href="{{route('competitions.entries.index', $competition)}}" class="flex items-center space-x-1">
                                     <span>League Entries</span>
-                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" class="size-4">
-                                        <path fill-rule="evenodd" d="M8.914 6.025a.75.75 0 0 1 1.06 0 3.5 3.5 0 0 1 0 4.95l-2 2a3.5 3.5 0 0 1-5.396-4.402.75.75 0 0 1 1.251.827 2 2 0 0 0 3.085 2.514l2-2a2 2 0 0 0 0-2.828.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" />
-                                        <path fill-rule="evenodd" d="M7.086 9.975a.75.75 0 0 1-1.06 0 3.5 3.5 0 0 1 0-4.95l2-2a3.5 3.5 0 0 1 5.396 4.402.75.75 0 0 1-1.251-.827 2 2 0 0 0-3.085-2.514l-2 2a2 2 0 0 0 0 2.828.75.75 0 0 1 0 1.06Z" clip-rule="evenodd" />
-                                    </svg>
+                                    <span class="text-gray-700 dark:text-gray-400">
+                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" class="size-4">
+                                            <path fill-rule="evenodd" d="M8.914 6.025a.75.75 0 0 1 1.06 0 3.5 3.5 0 0 1 0 4.95l-2 2a3.5 3.5 0 0 1-5.396-4.402.75.75 0 0 1 1.251.827 2 2 0 0 0 3.085 2.514l2-2a2 2 0 0 0 0-2.828.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" />
+                                            <path fill-rule="evenodd" d="M7.086 9.975a.75.75 0 0 1-1.06 0 3.5 3.5 0 0 1 0-4.95l2-2a3.5 3.5 0 0 1 5.396 4.402.75.75 0 0 1-1.251-.827 2 2 0 0 0-3.085-2.514l-2 2a2 2 0 0 0 0 2.828.75.75 0 0 1 0 1.06Z" clip-rule="evenodd" />
+                                        </svg>
+                                    </span>
                                 </a>
                             </dt>
                             <dd class="mt-1 text-sm/6 text-gray-700 dark:text-gray-400 sm:mt-2">
@@ -145,7 +157,7 @@
                                 </a>
                                 <a href="{{route('competitions.stages.matches.index', [$competition, $stages[0]])}}">
                                     <x-secondary-button>
-                                        {{__('View')}}
+                                        {{__('History')}}
                                     </x-secondary-button>
                                 </a>
                             </div>

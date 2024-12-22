@@ -44,7 +44,7 @@ class EntryController extends Controller
     {
         $this->entryService->enterCompetition($competition, $request->validated());
 
-        return redirect()->route('competitions.show', [$competition]);
+        return redirect()->route('competitions.entries.index', [$competition]);
     }
 
     public function show(Competition $competition, Entry $entry): View
@@ -75,13 +75,13 @@ class EntryController extends Controller
     {
         $this->entryService->updateEntry($entry, $request->validated());
 
-        return redirect()->route('competitions.show', [$competition]);
+        return redirect()->route('competitions.entries.index', [$competition]);
     }
 
     public function destroy(Competition $competition, Entry $entry): RedirectResponse
     {
         $this->entryService->withdrawFromCompetition($entry);
 
-        return redirect()->route('competitions.show', [$competition]);
+        return redirect()->route('competitions.entries.index', [$competition]);
     }
 }
