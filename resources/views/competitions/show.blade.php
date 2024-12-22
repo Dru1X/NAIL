@@ -132,6 +132,9 @@
                             <div class="ml-4 mt-4">
                                 <h3 class="text-base font-semibold text-gray-900 dark:text-gray-100">
                                     Recent Matches
+                                    <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">
+                                        {{$matchCount}} {{Str::plural('match result', $matchCount)}} recorded
+                                    </p>
                                 </h3>
                             </div>
                             <div class="ml-4 mt-4 shrink-0">

@@ -54,6 +54,7 @@ class CompetitionController extends Controller
         $entries     = $this->entryService->getCompetitionEntries($competition);
         $standings   = $this->standingService->getLeagueStandingsForCompetition($competition);
         $matches     = $this->matchResultService->getRecentMatchResultsForCompetition($competition);
+        $matchCount  = $this->matchResultService->countMatchResultsForCompetition($competition);
 
         return view('competitions.show', [
             'competition' => $competition,
@@ -61,6 +62,7 @@ class CompetitionController extends Controller
             'entries'     => $entries,
             'standings'   => $standings,
             'matches'     => $matches,
+            'matchCount'  => $matchCount,
         ]);
     }
 

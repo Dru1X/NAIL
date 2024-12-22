@@ -40,6 +40,14 @@ class MatchResultService
     // Lookup ----
 
     /**
+     * Count all match results for the given competition
+     */
+    public function countMatchResultsForCompetition(Competition $competition): int
+    {
+        return MatchResult::inCompetition($competition)->count();
+    }
+
+    /**
      * Get all match results for the given competition
      *
      * @return Collection<int, MatchResult>
