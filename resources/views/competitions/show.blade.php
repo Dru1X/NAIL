@@ -111,13 +111,6 @@
                                         Last updated {{$standings->max('updated_at')->toFormattedDateString()}}
                                     </p>
                                 </div>
-                                <div class="ml-4 mt-4 shrink-0">
-                                    <a href="{{route('competitions.stages.matches.create', [$competition, $stages[0]])}}">
-                                        <x-primary-button>
-                                            Match
-                                        </x-primary-button>
-                                    </a>
-                                </div>
                             </div>
                         </div>
 
@@ -127,4 +120,41 @@
             </div>
         </div>
     @endif
+
+    {{--Recent Matches--}}
+    <div class="pt-6">
+        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+            <div class="p-6 text-gray-900 dark:text-gray-100">
+                <div class="w-full bg-white dark:bg-gray-800 shadow-md overflow-hidden sm:rounded-lg">
+
+                    <div class="border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 px-4 py-5 sm:px-6">
+                        <div class="-ml-4 -mt-4 flex flex-wrap items-center justify-between sm:flex-nowrap">
+                            <div class="ml-4 mt-4">
+                                <h3 class="text-base font-semibold text-gray-900 dark:text-gray-100">
+                                    Recent Matches
+                                </h3>
+                            </div>
+                            <div class="ml-4 mt-4 shrink-0">
+                                <a href="{{route('competitions.stages.matches.create', [$competition, $stages[0]])}}">
+                                    <x-primary-button>
+                                        Record
+                                    </x-primary-button>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="pb-5 sm:pb-6">
+                        <ul class="flex-col space-y-4 divide-y dark:divide-gray-700">
+                            @foreach($matches as $match)
+                                <li class="pt-2">
+                                    <x-match-result :match="$match"/>
+                                </li>
+                            @endforeach
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </x-app-layout>

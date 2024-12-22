@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -33,6 +34,13 @@ class Score extends Model
         'bonus_points'          => 'integer',
         'league_points'         => 'integer',
     ];
+
+    // Attributes ----
+
+    public function handicapChange(): Attribute
+    {
+        return Attribute::get(fn() => $this->handicap_before - $this->handicap_after);
+    }
 
     // Relationships ----
 
