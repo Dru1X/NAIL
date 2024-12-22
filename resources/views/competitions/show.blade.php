@@ -67,7 +67,13 @@
 
                         <div class="border-b sm:border-0 border-gray-100 dark:border-gray-700 px-4 py-6 sm:col-span-1 sm:px-0">
                             <dt class="text-sm/6 font-medium text-gray-900 dark:text-gray-200">
-                                League Entries
+                                <a href="{{route('competitions.entries.index', $competition)}}" class="flex items-center space-x-1">
+                                    <span>League Entries</span>
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" class="size-4">
+                                        <path fill-rule="evenodd" d="M8.914 6.025a.75.75 0 0 1 1.06 0 3.5 3.5 0 0 1 0 4.95l-2 2a3.5 3.5 0 0 1-5.396-4.402.75.75 0 0 1 1.251.827 2 2 0 0 0 3.085 2.514l2-2a2 2 0 0 0 0-2.828.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" />
+                                        <path fill-rule="evenodd" d="M7.086 9.975a.75.75 0 0 1-1.06 0 3.5 3.5 0 0 1 0-4.95l2-2a3.5 3.5 0 0 1 5.396 4.402.75.75 0 0 1-1.251-.827 2 2 0 0 0-3.085-2.514l-2 2a2 2 0 0 0 0 2.828.75.75 0 0 1 0 1.06Z" clip-rule="evenodd" />
+                                    </svg>
+                                </a>
                             </dt>
                             <dd class="mt-1 text-sm/6 text-gray-700 dark:text-gray-400 sm:mt-2">
                                 {{$competition->entries_count}}
@@ -121,78 +127,4 @@
             </div>
         </div>
     @endif
-
-    {{--Entries--}}
-    <div class="pt-6">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <div class="p-6 text-gray-900 dark:text-gray-100">
-                <div class="w-full bg-white dark:bg-gray-800 shadow-md overflow-hidden sm:rounded-lg">
-
-                    <div class="border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 px-4 py-5 sm:px-6">
-                        <div class="-ml-4 -mt-4 flex flex-wrap items-center justify-between sm:flex-nowrap">
-                            <div class="ml-4 mt-4">
-                                <h3 class="text-base font-semibold text-gray-900 dark:text-gray-100">
-                                    All Entries
-                                </h3>
-                                <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">
-                                    Entries are currently {{$competition->entry_period->isInProgress()? 'open' : 'closed'}}
-                                </p>
-                            </div>
-                            <div class="ml-4 mt-4 shrink-0">
-                                <a href="{{route('competitions.entries.create', $competition)}}">
-                                    <x-primary-button
-                                        type="button"
-                                        :disabled="!$competition->entry_period->isInProgress() || $competition->entries_count >= $competition->stages[0]->capacity"
-                                    >
-                                        Enter
-                                    </x-primary-button>
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-
-                    @if($entries->isEmpty())
-                        <div class="p-6 text-center">
-                            No entries yet.
-                        </div>
-                    @endif
-
-                    <ul role="list" class="divide-y divide-gray-100 dark:divide-gray-700">
-                        @foreach($entries as $entry)
-                            <li class="flex justify-between gap-x-6 px-6 py-5">
-                                <div class="flex min-w-0 gap-x-4">
-                                    <img
-                                        class="size-12 flex-none rounded-full bg-gray-50 dark:bg-gray-800"
-                                        src="https://placehold.co/200x200?text={{$entry->person->initials}}"
-                                        alt="{{$entry->person->initials}}"
-                                    >
-                                    <div class="min-w-0 flex-auto">
-                                        <p class="text-sm/6 font-semibold text-gray-900 dark:text-gray-100">
-                                            <a href="{{route('people.show', $entry->person)}}" class="hover:underline">
-                                                {{$entry->person->full_name}}
-                                            </a>
-                                        </p>
-                                        <p class="mt-1 flex text-xs/5 text-gray-500 dark:text-gray-400">
-                                            {{$entry->bow_style->name}}
-                                        </p>
-                                    </div>
-                                </div>
-                                <div class="flex shrink-0 items-center gap-x-6">
-                                    <div class="hidden sm:flex sm:flex-col sm:items-end">
-                                        <p class="text-sm/6 text-gray-900 dark:text-gray-100">Current Handicap: {{$entry->current_handicap}}</p>
-                                        <p class="mt-1 text-xs/5 text-gray-500 dark:text-gray-400">Initial Handicap: {{$entry->initial_handicap}}</p>
-                                    </div>
-                                    <a href="{{route('competitions.entries.edit', [$competition, $entry])}}">
-                                        <x-secondary-button>
-                                            Edit
-                                        </x-secondary-button>
-                                    </a>
-                                </div>
-                            </li>
-                        @endforeach
-                    </ul>
-                </div>
-            </div>
-        </div>
-    </div>
 </x-app-layout>
