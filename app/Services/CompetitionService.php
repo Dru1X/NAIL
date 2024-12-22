@@ -41,6 +41,21 @@ class CompetitionService
             ->find($id);
     }
 
+    /**
+     * Get all rounds for the given competition stage
+     *
+     * @param Stage $stage
+     *
+     * @return Collection<int, Round>
+     */
+    public function getRoundsForStage(Stage $stage): Collection
+    {
+        return $stage
+            ->rounds()
+            ->orderBy('starts_on')
+            ->get();
+    }
+
     // Management ----
 
     /**

@@ -131,17 +131,22 @@
                         <div class="-ml-4 -mt-4 flex flex-wrap items-center justify-between sm:flex-nowrap">
                             <div class="ml-4 mt-4">
                                 <h3 class="text-base font-semibold text-gray-900 dark:text-gray-100">
-                                    Recent Matches
+                                    {{__('Recent Matches')}}
                                     <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">
-                                        {{$matchCount}} {{Str::plural('match result', $matchCount)}} recorded
+                                        {{$matchCount}} {{Str::plural('match result', $matchCount)}} {{__('recorded')}}
                                     </p>
                                 </h3>
                             </div>
-                            <div class="ml-4 mt-4 shrink-0">
+                            <div class="ml-4 mt-4 shrink-0 space-x-2">
                                 <a href="{{route('competitions.stages.matches.create', [$competition, $stages[0]])}}">
                                     <x-primary-button>
-                                        Record
+                                        {{__('Record')}}
                                     </x-primary-button>
+                                </a>
+                                <a href="{{route('competitions.stages.matches.index', [$competition, $stages[0]])}}">
+                                    <x-secondary-button>
+                                        {{__('View')}}
+                                    </x-secondary-button>
                                 </a>
                             </div>
                         </div>

@@ -6,6 +6,7 @@ use App\Http\Requests\MatchResultRequest;
 use App\Models\Competition;
 use App\Models\MatchResult;
 use App\Models\Stage;
+use App\Services\CompetitionService;
 use App\Services\EntryService;
 use App\Services\MatchResultService;
 use Illuminate\Http\RedirectResponse;
@@ -14,17 +15,20 @@ use Illuminate\View\View;
 class MatchResultController extends Controller
 {
     public function __construct(
+        protected CompetitionService $competitionService,
         protected EntryService       $entryService,
         protected MatchResultService $matchResultService,
     ) {}
 
     public function index(Competition $competition, Stage $stage): View
     {
+        $rounds  = $this->competitionService->getRoundsForStage($stage);
         $matches = $this->matchResultService->getMatchResultsForStage($stage);
 
         return view('matches.index', [
             'competition' => $competition,
             'stage'       => $stage,
+            'rounds'      => $rounds,
             'matches'     => $matches,
         ]);
     }

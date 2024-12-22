@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -25,6 +26,13 @@ class Round extends Model
             'starts_on' => 'immutable_date',
             'ends_on'   => 'immutable_date',
         ];
+    }
+
+    // Attributes ----
+
+    public function period(): Attribute
+    {
+        return Attribute::get(fn() => $this->starts_on->toPeriod($this->ends_on));
     }
 
     // Relationships ----
