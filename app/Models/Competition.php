@@ -2,10 +2,12 @@
 
 namespace App\Models;
 
+use App\Enums\StageType;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Competition extends Model
@@ -61,7 +63,23 @@ class Competition extends Model
 
     public function stages(): HasMany
     {
-        return $this->hasMany(Stage::class);
+        return $this->hasMany(Stage::class)
+            ->orderBy('starts_on')
+            ->orderBy('id');
+    }
+
+    public function leagueStage(): HasOne
+    {
+        return $this->stages()
+            ->where('type', StageType::League)
+            ->one();
+    }
+
+    public function playoffStage(): HasOne
+    {
+        return $this->stages()
+            ->where('type', StageType::Playoff)
+            ->one();
     }
 
     public function entries(): HasMany
