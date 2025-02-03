@@ -13,7 +13,7 @@ return new class extends Migration {
             $table->foreignId('competition_id')->constrained('competitions');
 
             $table->string('name');
-            $table->string('type', 10);
+            $table->string('type', 10)->index();
             $table->unsignedTinyInteger('capacity');
             $table->date('starts_on');
             $table->date('ends_on');
