@@ -67,7 +67,7 @@ class EntryService
         $entry->save();
 
         $this->standingService->addStandingForStage(
-            $competition->stages()->first(),
+            $competition->leagueStage,
             $entry
         );
 

@@ -2,10 +2,12 @@
 
 namespace Database\Factories;
 
+use App\Enums\StageType;
 use App\Models\Competition;
+use App\Models\Stage;
 use Carbon\CarbonImmutable;
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Illuminate\Support\Carbon;
+use Illuminate\Database\Eloquent\Factories\Sequence;
 
 class CompetitionFactory extends Factory
 {
@@ -34,5 +36,19 @@ class CompetitionFactory extends Factory
             'created_at'       => CarbonImmutable::now(),
             'updated_at'       => CarbonImmutable::now(),
         ];
+    }
+
+    // Helpers ----
+
+    public function withStages(): self
+    {
+        return $this->has(
+            Stage::factory()
+                ->count(2)
+                ->state(new Sequence(
+                    ['type' => StageType::League],
+                    ['type' => StageType::Playoff],
+                ))
+        );
     }
 }

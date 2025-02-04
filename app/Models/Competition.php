@@ -46,7 +46,7 @@ class Competition extends Model
 
     public function isFull(): Attribute
     {
-        return Attribute::get(fn() => $this->entries()->count() >= $this->stages()->first()->capacity);
+        return Attribute::get(fn() => $this->entries()->count() >= $this->leagueStage->capacity);
     }
 
     public function status(): Attribute

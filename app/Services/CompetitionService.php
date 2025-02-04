@@ -2,14 +2,14 @@
 
 namespace App\Services;
 
+use App\Data\CompetitionData;
+use App\Data\StageData;
 use App\Enums\StageType;
 use App\Models\Competition;
 use App\Models\Round;
 use App\Models\Stage;
-use Carbon\CarbonImmutable;
 use Carbon\CarbonInterface;
 use Carbon\CarbonInterval;
-use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 
@@ -36,7 +36,7 @@ class CompetitionService
      */
     public function findCompetition(int $id): ?Competition
     {
-        return Competition::with(['stages', 'stages.standings'])
+        return Competition::with(['leagueStage', 'leagueStage.standings', 'playoffStage'])
             ->withCount(['stages', 'entries'])
             ->find($id);
     }
@@ -61,21 +61,20 @@ class CompetitionService
     /**
      * Add a new competition
      */
-    public function addCompetition(array $data): Competition
+    public function addCompetition(CompetitionData $data): Competition
     {
         return DB::transaction(function () use ($data): Competition {
 
             $competition = Competition::create([
-                'name'             => $data['name'],
-                'entries_open_on'  => CarbonImmutable::make($data['entries_open_on']),
-                'entries_close_on' => CarbonImmutable::make($data['entries_close_on']),
+                'name'             => $data->name,
+                'entries_open_on'  => $data->entriesOpenOn,
+                'entries_close_on' => $data->entriesCloseOn,
                 'starts_on'        => now(),
                 'ends_on'          => now(),
             ]);
 
-            foreach ($data['stages'] as $stageData) {
-                $this->addStage($competition, $stageData);
-            }
+            $this->addStage($competition, $data->leagueStage);
+            $this->addStage($competition, $data->playoffStage);
 
             $competition->update([
                 'starts_on' => $competition->stages->min('starts_on'),
@@ -89,32 +88,17 @@ class CompetitionService
     /**
      * Update an existing competition
      */
-    public function updateCompetition(Competition $competition, array $data): Competition
+    public function updateCompetition(Competition $competition, CompetitionData $data): Competition
     {
         return DB::transaction(function () use ($competition, $data): Competition {
             $competition->update([
-                'name'             => $data['name'],
-                'entries_open_on'  => CarbonImmutable::make($data['entries_open_on']),
-                'entries_close_on' => CarbonImmutable::make($data['entries_close_on']),
+                'name'             => $data->name,
+                'entries_open_on'  => $data->entriesOpenOn,
+                'entries_close_on' => $data->entriesCloseOn,
             ]);
 
-            $keepStageIds   = array_filter(Arr::pluck($data['stages'], 'id'));
-            $existingStages = $competition->stages;
-
-            foreach ($existingStages as $stage) {
-                if (!in_array($stage->id, $keepStageIds)) {
-                    $this->removeStage($stage);
-                }
-            }
-
-            foreach ($data['stages'] as $stageData) {
-                if ($stageId = $stageData['id'] ?? null) {
-                    $this->updateStage($existingStages->find($stageId), $stageData);
-                    continue;
-                }
-
-                $this->addStage($competition, $stageData);
-            }
+            $this->updateStage($competition->leagueStage, $data->leagueStage);
+            $this->updateStage($competition->playoffStage, $data->playoffStage);
 
             $competition->update([
                 'starts_on' => $competition->stages->min('starts_on'),
@@ -142,16 +126,16 @@ class CompetitionService
     /**
      * Add a new stage to a competition
      */
-    protected function addStage(Competition $competition, array $data): Stage
+    protected function addStage(Competition $competition, StageData $data): Stage
     {
-        $type = StageType::from($data['type']);
+        $type = $data->type;
 
         $stage = $competition->stages()->create([
             'name'      => "$type->name Stage",
             'type'      => $type,
             'capacity'  => $type->defaultCapacity(),
-            'starts_on' => CarbonImmutable::make($data['starts_on']),
-            'ends_on'   => CarbonImmutable::make($data['ends_on']),
+            'starts_on' => $data->startsOn,
+            'ends_on'   => $data->endsOn,
         ]);
 
         $this->addRoundsForStage($stage);
@@ -162,15 +146,15 @@ class CompetitionService
     /**
      * Update an existing stage
      */
-    protected function updateStage(Stage $stage, array $data): Stage
+    protected function updateStage(Stage $stage, StageData $data): Stage
     {
-        $type = StageType::from($data['type']);
+        $type = $data->type;
 
         $stage->update([
             'name'      => "$type->name Stage",
             'type'      => $type,
-            'starts_on' => CarbonImmutable::make($data['starts_on']),
-            'ends_on'   => CarbonImmutable::make($data['ends_on']),
+            'starts_on' => $data->startsOn,
+            'ends_on'   => $data->endsOn,
         ]);
 
         if ($stage->wasChanged('type')) {

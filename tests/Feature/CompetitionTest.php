@@ -33,7 +33,7 @@ test('competition information is displayed', function () {
     $user = User::factory()->create();
 
     $competition = Competition::factory()
-        ->hasStages(2)
+        ->withStages()
         ->create();
 
     $response = $this
@@ -63,13 +63,11 @@ test('new competition can be added', function () {
             'entries_open_on'  => '2023-12-01',
             'entries_close_on' => '2024-01-07',
             'stages'           => [
-                [
-                    'type'      => 'league',
+                'league'  => [
                     'starts_on' => '2024-01-01',
                     'ends_on'   => '2024-03-31',
                 ],
-                [
-                    'type'      => 'playoff',
+                'playoff' => [
                     'starts_on' => '2024-04-01',
                     'ends_on'   => '2024-04-01',
                 ],
@@ -105,7 +103,7 @@ test('competition editing form is displayed', function () {
     $user = User::factory()->create();
 
     $competition = Competition::factory()
-        ->hasStages(2)
+        ->withStages()
         ->create();
 
     $response = $this
@@ -119,7 +117,7 @@ test('competition can be updated', function () {
     $user = User::factory()->create();
 
     $competition = Competition::factory()
-        ->hasStages(2)
+        ->withStages()
         ->create(['name' => 'Indoor League 2024']);
 
     $response = $this
@@ -129,14 +127,11 @@ test('competition can be updated', function () {
             'entries_open_on'  => '2023-12-01',
             'entries_close_on' => '2024-01-07',
             'stages'           => [
-                [
-                    'id'        => $competition->stages[0]->id,
-                    'type'      => 'league',
+                'league'  => [
                     'starts_on' => '2024-01-01',
                     'ends_on'   => '2024-03-31',
                 ],
-                [
-                    'type'      => 'playoff',
+                'playoff' => [
                     'starts_on' => '2024-04-01',
                     'ends_on'   => '2024-04-01',
                 ],
@@ -154,8 +149,8 @@ test('competition can be removed', function () {
     $user = User::factory()->create();
 
     $competition = Competition::factory()
-        ->hasStages(2)
-        ->create();
+        ->withStages()
+        ->create(['name' => 'Indoor League 2024']);
 
     $response = $this
         ->actingAs($user)

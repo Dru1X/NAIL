@@ -2,10 +2,8 @@
 
 namespace Database\Seeders;
 
-use App\Enums\StageType;
 use App\Models\Competition;
 use App\Models\Entry;
-use App\Models\Person;
 use App\Models\Standing;
 use Illuminate\Database\Seeder;
 
@@ -21,9 +19,7 @@ class EntrySeeder extends Seeder
                 continue;
             }
 
-            $leagueStage = $competition
-                ->stages()
-                ->firstWhere('type', StageType::League);
+            $leagueStage = $competition->leagueStage;
 
             Entry::factory()
                 ->for($competition)

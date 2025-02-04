@@ -54,12 +54,6 @@
             <x-input-error :messages="$errors->get('entries_close_on')" class="mt-2"/>
         </div>
 
-        @isset($competition)
-            <input type="hidden" name="stages[0][id]" value="{{$competition->stages[0]?->id}}"/>
-        @endisset
-
-        <input type="hidden" name="stages[0][type]" value="league"/>
-
         {{--League Stage Start Date--}}
         <div>
             <x-input-label for="leagueStartsOn" :value="__('League Start Date')" />
@@ -67,12 +61,12 @@
                 type="date"
                 class="block mt-1 w-full"
                 id="leagueStartsOn"
-                name="stages[0][starts_on]"
+                name="stages[league][starts_on]"
                 autocomplete="off"
                 required
-                :value="old('stages.0.starts_on', isset($competition)? $competition->stages[0]?->starts_on->toDateString() : '')"
+                :value="old('stages.league.starts_on', isset($competition)? $competition->leagueStage?->starts_on->toDateString() : '')"
             />
-            <x-input-error :messages="$errors->get('stages.0.starts_on')" class="mt-2"/>
+            <x-input-error :messages="$errors->get('stages.league.starts_on')" class="mt-2"/>
         </div>
 
         {{--League Stage End Date--}}
@@ -82,19 +76,13 @@
                 type="date"
                 class="block mt-1 w-full"
                 id="leagueEndsOn"
-                name="stages[0][ends_on]"
+                name="stages[league][ends_on]"
                 autocomplete="off"
                 required
-                :value="old('stages.0.ends_on', isset($competition)? $competition->stages[0]?->ends_on->toDateString() : '')"
+                :value="old('stages.league.ends_on', isset($competition)? $competition->leagueStage?->ends_on->toDateString() : '')"
             />
-            <x-input-error :messages="$errors->get('stages.0.ends_on')" class="mt-2"/>
+            <x-input-error :messages="$errors->get('stages.league.ends_on')" class="mt-2"/>
         </div>
-
-        @isset($competition)
-            <input type="hidden" name="stages[1][id]" value="{{$competition->stages[0]?->id}}"/>
-        @endisset
-
-        <input type="hidden" name="stages[1][type]" value="playoff"/>
 
         {{--Playoff Stage Start Date--}}
         <div>
@@ -103,12 +91,12 @@
                 type="date"
                 class="block mt-1 w-full"
                 id="playoffStartsOn"
-                name="stages[1][starts_on]"
+                name="stages[playoff][starts_on]"
                 autocomplete="off"
                 required
-                :value="old('stages.1.starts_on', isset($competition)? $competition->stages[1]?->starts_on->toDateString() : '')"
+                :value="old('stages.playoff.starts_on', isset($competition)? $competition->playoffStage?->starts_on->toDateString() : '')"
             />
-            <x-input-error :messages="$errors->get('stages.1.starts_on')" class="mt-2"/>
+            <x-input-error :messages="$errors->get('stages.playoff.starts_on')" class="mt-2"/>
         </div>
 
         {{--Playoff Stage End Date--}}
@@ -118,12 +106,12 @@
                 type="date"
                 class="block mt-1 w-full"
                 id="playoffEndsOn"
-                name="stages[1][ends_on]"
+                name="stages[playoff][ends_on]"
                 autocomplete="off"
                 required
-                :value="old('stages.1.ends_on', isset($competition)? $competition->stages[1]?->ends_on->toDateString() : '')"
+                :value="old('stages.playoff.ends_on', isset($competition)? $competition->playoffStage?->ends_on->toDateString() : '')"
             />
-            <x-input-error :messages="$errors->get('stages.1.ends_on')" class="mt-2"/>
+            <x-input-error :messages="$errors->get('stages.playoff.ends_on')" class="mt-2"/>
         </div>
     </div>
 
