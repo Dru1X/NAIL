@@ -25,7 +25,7 @@ class StandingService
      */
     public function getLeagueStandingsForCompetition(Competition $competition): Collection
     {
-        $stage = $competition->stages->firstWhere('type', StageType::League);
+        $stage = $competition->leagueStage;
 
         return $stage
             ->standings()

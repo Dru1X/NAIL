@@ -41,7 +41,7 @@ class CompetitionController extends Controller
     {
         Gate::authorize('create', Competition::class);
 
-        $this->competitionService->addCompetition($request->validated());
+        $this->competitionService->addCompetition($request->validatedData());
 
         return redirect()->route('competitions.index');
     }
@@ -57,12 +57,13 @@ class CompetitionController extends Controller
         $matchCount  = $this->matchResultService->countMatchResultsForCompetition($competition);
 
         return view('competitions.show', [
-            'competition' => $competition,
-            'stages'      => $competition->stages,
-            'entries'     => $entries,
-            'standings'   => $standings,
-            'matches'     => $matches,
-            'matchCount'  => $matchCount,
+            'competition'  => $competition,
+            'leagueStage'  => $competition->leagueStage,
+            'playoffStage' => $competition->playoffStage,
+            'entries'      => $entries,
+            'standings'    => $standings,
+            'matches'      => $matches,
+            'matchCount'   => $matchCount,
         ]);
     }
 
@@ -79,7 +80,7 @@ class CompetitionController extends Controller
     {
         Gate::authorize('update', $competition);
 
-        $this->competitionService->updateCompetition($competition, $request->validated());
+        $this->competitionService->updateCompetition($competition, $request->validatedData());
 
         return redirect()->route('competitions.index');
     }

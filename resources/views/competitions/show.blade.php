@@ -6,7 +6,7 @@
     </x-slot>
 
     <x-slot name="actions">
-        <a href="{{route('competitions.stages.matches.index', [$competition, $stages[0]])}}">
+        <a href="{{route('competitions.stages.matches.index', [$competition, $leagueStage])}}">
             <x-secondary-button>
                 {{__('Matches')}}
             </x-secondary-button>
@@ -53,7 +53,7 @@
                                 League Starts
                             </dt>
                             <dd class="mt-1 text-sm/6 text-gray-700 dark:text-gray-400 sm:mt-2">
-                                {{$stages[0]->starts_on->toFormattedDateString()}}
+                                {{$leagueStage->starts_on->toFormattedDateString()}}
                             </dd>
                         </div>
 
@@ -62,7 +62,7 @@
                                 Playoff Date
                             </dt>
                             <dd class="mt-1 text-sm/6 text-gray-700 dark:text-gray-400 sm:mt-2">
-                                {{$stages[1]->starts_on->toFormattedDateString()}}
+                                {{$playoffStage->starts_on->toFormattedDateString()}}
                             </dd>
                         </div>
 
@@ -71,7 +71,7 @@
                                 League Spaces
                             </dt>
                             <dd class="mt-1 text-sm/6 text-gray-700 dark:text-gray-400 sm:mt-2">
-                                {{$competition->stages[0]->capacity}}
+                                {{$leagueStage->capacity}}
                             </dd>
                         </div>
 
@@ -97,7 +97,7 @@
                                 Playoff Spaces
                             </dt>
                             <dd class="mt-1 text-sm/6 text-gray-700 dark:text-gray-400 sm:mt-2">
-                                {{$stages[1]->capacity}}
+                                {{$playoffStage->capacity}}
                             </dd>
                         </div>
                     </dl>
@@ -150,12 +150,12 @@
                                 </h3>
                             </div>
                             <div class="ml-4 mt-4 shrink-0 space-x-2">
-                                <a href="{{route('competitions.stages.matches.create', [$competition, $stages[0]])}}">
+                                <a href="{{route('competitions.stages.matches.create', [$competition, $leagueStage])}}">
                                     <x-primary-button>
                                         {{__('Record')}}
                                     </x-primary-button>
                                 </a>
-                                <a href="{{route('competitions.stages.matches.index', [$competition, $stages[0]])}}">
+                                <a href="{{route('competitions.stages.matches.index', [$competition, $leagueStage])}}">
                                     <x-secondary-button>
                                         {{__('History')}}
                                     </x-secondary-button>
