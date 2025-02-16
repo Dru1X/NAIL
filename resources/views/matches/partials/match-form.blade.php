@@ -37,7 +37,7 @@
                 <div class="mt-1 grid grid-cols-1">
                     <select
                         id="leftEntryId"
-                        name="left_score[entry_id]"
+                        name="scores[left][entry_id]"
                         autocomplete="off"
                         required
                         class="col-start-1 row-start-1 w-full h-[42px] appearance-none bg-none rounded-md bg-white dark:bg-gray-900 py-1.5 pl-3 pr-8 text-base text-gray-900 dark:text-gray-200 outline outline-1 -outline-offset-1 outline-gray-300 dark:outline-gray-700 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"
@@ -64,7 +64,7 @@
                         />
                     </svg>
                 </div>
-                <x-input-error :messages="$errors->get('left_score.entry_id')" class="mt-2"/>
+                <x-input-error :messages="$errors->get('scores.left.entry_id')" class="mt-2"/>
             </div>
 
             {{--Match Points--}}
@@ -74,14 +74,14 @@
                     type="number"
                     class="block mt-1 w-full"
                     id="leftMatchPoints"
-                    name="left_score[match_points]"
+                    name="scores[left][match_points]"
                     min="0"
                     max="150"
                     autocomplete="off"
                     required
-                    :value="old('left_score.match_points', isset($match)? $match->leftScore->match_points : '')"
+                    :value="old('scores.left.match_points', isset($match)? $match->leftScore->match_points : '')"
                 />
-                <x-input-error :messages="$errors->get('left_score.match_points')" class="mt-2"/>
+                <x-input-error :messages="$errors->get('scores.left.match_points')" class="mt-2"/>
             </div>
         </div>
 
@@ -97,7 +97,7 @@
                 <div class="mt-1 grid grid-cols-1">
                     <select
                         id="rightEntryId"
-                        name="right_score[entry_id]"
+                        name="scores[right][entry_id]"
                         autocomplete="off"
                         required
                         class="col-start-1 row-start-1 w-full h-[42px] appearance-none bg-none rounded-md bg-white dark:bg-gray-900 py-1.5 pl-3 pr-8 text-base text-gray-900 dark:text-gray-200 outline outline-1 -outline-offset-1 outline-gray-300 dark:outline-gray-700 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"
@@ -124,7 +124,7 @@
                         />
                     </svg>
                 </div>
-                <x-input-error :messages="$errors->get('right_score.entry_id')" class="mt-2"/>
+                <x-input-error :messages="$errors->get('scores.right.entry_id')" class="mt-2"/>
             </div>
 
             {{--Match Points--}}
@@ -134,14 +134,14 @@
                     type="number"
                     class="block mt-1 w-full"
                     id="rightMatchPoints"
-                    name="right_score[match_points]"
+                    name="scores[right][match_points]"
                     min="0"
                     max="150"
                     autocomplete="off"
                     required
-                    :value="old('right_score.match_points', isset($match)? $match->rightScore->match_points : '')"
+                    :value="old('scores.right.match_points', isset($match)? $match->rightScore->match_points : '')"
                 />
-                <x-input-error :messages="$errors->get('right_score.match_points')" class="mt-2"/>
+                <x-input-error :messages="$errors->get('scores.right.match_points')" class="mt-2"/>
             </div>
         </div>
     </div>

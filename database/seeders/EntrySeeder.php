@@ -11,9 +11,6 @@ class EntrySeeder extends Seeder
 {
     public function run(): void
     {
-        Standing::query()->forceDelete();
-        Entry::query()->forceDelete();
-
         foreach (Competition::all() as $competition) {
             if ($competition->entries()->count() > 0) {
                 continue;

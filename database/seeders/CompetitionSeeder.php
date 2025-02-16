@@ -12,9 +12,6 @@ class CompetitionSeeder extends Seeder
 {
     public function run(): void
     {
-        Stage::query()->forceDelete();
-        Competition::query()->forceDelete();
-
         Competition::factory()
             ->count(5)
             ->create()

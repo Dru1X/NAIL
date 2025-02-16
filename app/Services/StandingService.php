@@ -58,11 +58,8 @@ class StandingService
      */
     public function applyMatchResult(MatchResult $match): void
     {
-        /** @var Score[] $scores */
-        $scores = [$match->leftScore, $match->rightScore];
-
-        DB::transaction(function () use ($match, $scores) {
-            foreach ($scores as $score) {
+        DB::transaction(function () use ($match) {
+            foreach ($match->scores as $score) {
                 $standing = $score->entry
                     ->standings()
                     ->whereStageId($match->round->stage_id)

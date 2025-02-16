@@ -11,8 +11,6 @@ return new class extends Migration {
             $table->id();
 
             $table->foreignId('round_id')->constrained('rounds');
-            $table->foreignId('left_score_id')->constrained('scores');
-            $table->foreignId('right_score_id')->constrained('scores');
             $table->foreignId('winner_id')->nullable()->constrained('entries');
 
             $table->dateTime('shot_at')->index();

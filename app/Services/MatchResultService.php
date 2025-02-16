@@ -2,6 +2,9 @@
 
 namespace App\Services;
 
+use App\Data\MatchResultData;
+use App\Data\ScoreData;
+use App\Enums\Side;
 use App\Models\Competition;
 use App\Models\Entry;
 use App\Models\Handicap;
@@ -110,30 +113,25 @@ class MatchResultService
     /**
      * Record a new match result
      */
-    public function recordMatchResult(Stage $stage, array $data): MatchResult
+    public function recordMatchResult(Stage $stage, MatchResultData $data): MatchResult
     {
         return DB::transaction(function () use ($stage, $data): MatchResult {
 
-            // Parse the match date/time
-            $shotAt = CarbonImmutable::make($data['shot_at']);
+            // Determine the round in which this match took place
+            $round = $this->resolveRound($stage, $data->shotAt);
 
             // Make a new match result
-            $match = MatchResult::make(['shot_at' => $shotAt]);
-
-            // Determine the round in which this match took place
-            $round = $this->resolveRound($stage, $shotAt);
+            $match = MatchResult::make(['shot_at' => $data->shotAt]);
             $match->round()->associate($round);
+            $match->save();
 
             // Associate the individual scores with the match result
-            $leftScore = $this->recordScore($data['left_score']);
-            $match->leftScore()->associate($leftScore);
-
-            $rightScore = $this->recordScore($data['right_score']);
-            $match->rightScore()->associate($rightScore);
+            $leftScore  = $this->recordScore($match, $data->leftScore);
+            $rightScore = $this->recordScore($match, $data->rightScore);
 
             // Apply domain rules
             $this->preventSoloMatches($leftScore, $rightScore);
-            $this->preventDuplicateMatches($stage, $leftScore, $rightScore);
+            $this->preventDuplicateMatches($stage, $leftScore, $rightScore, $match);
 
             // Handle a drawn on decisive match outcome
             if ($leftScore->match_points_adjusted === $rightScore->match_points_adjusted) {
@@ -157,20 +155,17 @@ class MatchResultService
      *
      * This does not currently cause an update to the standings!
      */
-    public function updateMatchResult(MatchResult $match, Stage $stage, array $data): MatchResult
+    public function updateMatchResult(MatchResult $match, Stage $stage, MatchResultData $data): MatchResult
     {
         return DB::transaction(function () use ($match, $stage, $data): MatchResult {
 
-            // Parse the match date/time
-            $shotAt = CarbonImmutable::make($data['shot_at']);
-
             // Determine the round in which this match took place
-            $round = $this->resolveRound($stage, $shotAt);
+            $round = $this->resolveRound($stage, $data->shotAt);
             $match->round()->associate($round);
 
             // Update the individual scores
-            $leftScore  = $this->updateScore($match->leftScore, $data['left_score']);
-            $rightScore = $this->updateScore($match->rightScore, $data['right_score']);
+            $leftScore  = $this->updateScore($match->leftScore, $data->leftScore);
+            $rightScore = $this->updateScore($match->rightScore, $data->rightScore);
 
             // Apply domain rules
             $this->preventSoloMatches($leftScore, $rightScore);
@@ -184,7 +179,7 @@ class MatchResultService
             }
 
             // Update the result
-            $match->update(['shot_at' => $shotAt]);
+            $match->update(['shot_at' => $data->shotAt]);
 
             return $match;
         });
@@ -196,12 +191,9 @@ class MatchResultService
     public function removeMatchResult(MatchResult $match): bool
     {
         return DB::transaction(function () use ($match): bool {
-            $matchDeleted = $match->delete();
+            $match->scores()->delete();
 
-            $match->leftScore()->delete();
-            $match->rightScore()->delete();
-
-            return $matchDeleted;
+            return $match->delete();
         });
     }
 
@@ -246,28 +238,30 @@ class MatchResultService
     /**
      * Record an individual score for a match competitor
      */
-    protected function recordScore(array $data): Score
+    protected function recordScore(MatchResult $match, ScoreData $data): Score
     {
-        $entry = Entry::findOrFail($data['entry_id']);
+        $entry = Entry::findOrFail($data->entryId);
 
         $handicap = Handicap::whereBowStyle($entry->bow_style)
             ->whereNumber($entry->current_handicap)
             ->firstOrFail();
 
-        $adjustedPoints = $data['match_points'] + $handicap->match_allowance;
+        $adjustedPoints = $data->matchPoints + $handicap->match_allowance;
 
-        $newHandicap = $this->handicapService->recalculateHandicap($handicap, $data['match_points']);
+        $newHandicap = $this->handicapService->recalculateHandicap($handicap, $data->matchPoints);
 
         $score = Score::make([
+            'side'                  => $data->side,
             'handicap_before'       => $handicap->number,
             'handicap_after'        => $newHandicap->number,
             'allowance'             => $handicap->match_allowance,
-            'match_points'          => $data['match_points'],
+            'match_points'          => $data->matchPoints,
             'match_points_adjusted' => $adjustedPoints,
             'bonus_points'          => $adjustedPoints >= 1440 ? self::BONUS_POINTS_FOR_HANDICAP_HIT : 0,
             'league_points'         => 0, #This gets added when the scores are compared
         ]);
 
+        $score->matchResult()->associate($match);
         $score->entry()->associate($entry);
 
         $score->save();
@@ -284,9 +278,9 @@ class MatchResultService
      *
      * This does not currently cause an update to the entry's current handicap!
      */
-    protected function updateScore(Score $score, array $data): Score
+    protected function updateScore(Score $score, ScoreData $data): Score
     {
-        $entry = Entry::findOrFail($data['entry_id']);
+        $entry = Entry::findOrFail($data->entryId);
         $score->entry()->associate($entry);
 
         $matchShotAt = $score->matchResult->shot_at;
@@ -301,15 +295,15 @@ class MatchResultService
             ->whereNumber($handicapNumber)
             ->firstOrFail();
 
-        $adjustedPoints = $data['match_points'] + $handicap->match_allowance;
+        $adjustedPoints = $data->matchPoints + $handicap->match_allowance;
 
-        $newHandicap = $this->handicapService->recalculateHandicap($handicap, $data['match_points']);
+        $newHandicap = $this->handicapService->recalculateHandicap($handicap, $data->matchPoints);
 
         $score->update([
             'handicap_before'       => $handicap->number,
             'handicap_after'        => $newHandicap->number,
             'allowance'             => $handicap->match_allowance,
-            'match_points'          => $data['match_points'],
+            'match_points'          => $data->matchPoints,
             'match_points_adjusted' => $adjustedPoints,
             'bonus_points'          => $adjustedPoints >= 1440 ? self::BONUS_POINTS_FOR_HANDICAP_HIT : 0,
             'league_points'         => 0, #This gets added when the scores are compared
