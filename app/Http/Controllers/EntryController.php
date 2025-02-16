@@ -9,6 +9,7 @@ use App\Models\Entry;
 use App\Services\EntryService;
 use App\Services\PersonService;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\View\View;
 
 class EntryController extends Controller
@@ -20,6 +21,8 @@ class EntryController extends Controller
 
     public function index(Competition $competition): View
     {
+        Gate::authorize('viewAny', Entry::class);
+
         $entries = $this->entryService->getCompetitionEntries($competition);
 
         return view('competitions.entries.index', [
@@ -30,6 +33,8 @@ class EntryController extends Controller
 
     public function create(Competition $competition): View
     {
+        Gate::authorize('create', Entry::class);
+
         $people = $this->personService->getPeople();
 
         return view('competitions.entries.create', [
@@ -42,6 +47,8 @@ class EntryController extends Controller
 
     public function store(EntryRequest $request, Competition $competition): RedirectResponse
     {
+        Gate::authorize('create', Entry::class);
+
         $this->entryService->enterCompetition($competition, $request->validated());
 
         return redirect()->route('competitions.entries.index', [$competition]);
@@ -49,6 +56,8 @@ class EntryController extends Controller
 
     public function show(Competition $competition, Entry $entry): View
     {
+        Gate::authorize('view', $entry);
+
         $entry = $this->entryService->findCompetitionEntry($competition, $entry->id);
 
         return view('competitions.entries.show', [
@@ -59,6 +68,8 @@ class EntryController extends Controller
 
     public function edit(Competition $competition, Entry $entry): View
     {
+        Gate::authorize('update', $entry);
+
         $people = $this->personService->getPeople();
         $entry  = $this->entryService->findCompetitionEntry($competition, $entry->id);
 
@@ -73,6 +84,8 @@ class EntryController extends Controller
 
     public function update(EntryRequest $request, Competition $competition, Entry $entry): RedirectResponse
     {
+        Gate::authorize('update', $entry);
+
         $this->entryService->updateEntry($entry, $request->validated());
 
         return redirect()->route('competitions.entries.index', [$competition]);
@@ -80,6 +93,8 @@ class EntryController extends Controller
 
     public function destroy(Competition $competition, Entry $entry): RedirectResponse
     {
+        Gate::authorize('delete', $entry);
+
         $this->entryService->withdrawFromCompetition($entry);
 
         return redirect()->route('competitions.entries.index', [$competition]);
