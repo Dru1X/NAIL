@@ -20,7 +20,7 @@ test('new entry can be added', function () {
     $user = User::factory()->create();
 
     $person      = Person::factory()->create();
-    $competition = Competition::factory()->create();
+    $competition = Competition::factory()->withStages()->create();
 
     $response = $this
         ->actingAs($user)
@@ -30,7 +30,7 @@ test('new entry can be added', function () {
             'initial_handicap' => 45,
         ]);
 
-    $response->assertRedirect("/competitions/$competition->id");
+    $response->assertRedirect("/competitions/$competition->id/entries");
 
     $this->assertDatabaseHas('entries', [
         'competition_id'   => $competition->id,
@@ -59,9 +59,11 @@ test('entry editing form is displayed', function () {
 test('entry can be updated', function () {
     $user = User::factory()->create();
 
+    $competition = Competition::factory()->withStages()->create();
+
     $entry = Entry::factory()
         ->forPerson()
-        ->forCompetition()
+        ->for($competition)
         ->create();
 
     $response = $this
@@ -74,7 +76,7 @@ test('entry can be updated', function () {
             'current_handicap' => 45,
         ]);
 
-    $response->assertRedirect("/competitions/$entry->competition_id");
+    $response->assertRedirect("/competitions/$entry->competition_id/entries");
 
     $this->assertDatabaseHas('entries', [
         'competition_id'   => $entry->competition_id,
@@ -88,16 +90,18 @@ test('entry can be updated', function () {
 test('entry can be removed', function () {
     $user = User::factory()->create();
 
+    $competition = Competition::factory()->withStages()->create();
+
     $entry = Entry::factory()
         ->forPerson()
-        ->forCompetition()
+        ->for($competition)
         ->create();
 
     $response = $this
         ->actingAs($user)
         ->delete("/competitions/$entry->competition_id/entries/$entry->id");
 
-    $response->assertRedirect("/competitions/$entry->competition_id");
+    $response->assertRedirect("/competitions/$entry->competition_id/entries");
 
     $this->assertSoftDeleted('entries', [
         'id' => $entry->id,
