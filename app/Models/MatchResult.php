@@ -2,12 +2,15 @@
 
 namespace App\Models;
 
+use App\Enums\Side;
 use Carbon\CarbonInterface;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class MatchResult extends Model
@@ -16,18 +19,14 @@ class MatchResult extends Model
 
     protected $fillable = [
         'round_id',
-        'left_score_id',
-        'right_score_id',
         'winner_id',
         'shot_at',
     ];
 
     protected $casts = [
-        'round_id'       => 'integer',
-        'left_score_id'  => 'integer',
-        'right_score_id' => 'integer',
-        'winner_id'      => 'integer',
-        'shot_at'        => 'immutable_datetime',
+        'round_id'  => 'integer',
+        'winner_id' => 'integer',
+        'shot_at'   => 'immutable_datetime',
     ];
 
     // Attributes ----
@@ -49,14 +48,23 @@ class MatchResult extends Model
         return $this->belongsTo(Round::class);
     }
 
-    public function leftScore(): BelongsTo
+    public function scores(): HasMany
     {
-        return $this->belongsTo(Score::class, 'left_score_id');
+        return $this->hasMany(Score::class);
     }
 
-    public function rightScore(): BelongsTo
+    public function leftScore(): HasOne
     {
-        return $this->belongsTo(Score::class, 'right_score_id');
+        return $this->scores()
+            ->where('side', Side::Left)
+            ->one();
+    }
+
+    public function rightScore(): HasOne
+    {
+        return $this->scores()
+            ->where('side', Side::Right)
+            ->one();
     }
 
     public function winner(): BelongsTo
@@ -97,28 +105,14 @@ class MatchResult extends Model
     /** @noinspection PhpUnused */
     public function scopeShotBy(Builder $query, Entry $entry): Builder
     {
-        return $query->where(fn(Builder|self $match) => $match
-            ->whereHas('leftScore', fn(Builder|Score $score) => $score
-                ->where('entry_id', $entry->id)
-            )
-            ->orWhereHas('rightScore', fn(Builder|Score $score) => $score
-                ->where('entry_id', $entry->id)
-            )
-        );
+        return $query->whereHas('scores', fn(Builder|Score $score) => $score->whereEntryId($entry->id));
     }
 
     /** @noinspection PhpUnused */
     public function scopeShotByBoth(Builder $query, Entry $firstEntry, Entry $secondEntry): Builder
     {
-        return $query->where(fn(Builder|self $match) => $match
-            ->whereHas('leftScore', fn(Builder|Score $score) => $score
-                ->where('entry_id', $firstEntry->id)
-                ->orWhere('entry_id', $secondEntry->id)
-            )
-            ->whereHas('rightScore', fn(Builder|Score $score) => $score
-                ->where('entry_id', $firstEntry->id)
-                ->orWhere('entry_id', $secondEntry->id)
-            )
+        return $query->whereHas('scores', fn(Builder|Score $score) => $score
+            ->whereIn('entry_id', [$firstEntry->id, $secondEntry->id]), count: 2
         );
     }
 }

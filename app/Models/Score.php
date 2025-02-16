@@ -2,11 +2,11 @@
 
 namespace App\Models;
 
+use App\Enums\Side;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Score extends Model
@@ -14,7 +14,9 @@ class Score extends Model
     use HasFactory, SoftDeletes;
 
     protected $fillable = [
+        'match_result_id',
         'entry_id',
+        'side',
         'handicap_before',
         'handicap_after',
         'allowance',
@@ -25,9 +27,12 @@ class Score extends Model
     ];
 
     protected $casts = [
+        'match_result_id'       => 'integer',
         'entry_id'              => 'integer',
+        'side'                  => Side::class,
         'handicap_before'       => 'integer',
         'handicap_after'        => 'integer',
+        'handicap_change'       => 'integer', #TODO: Add this to the table and remove the dynamic attribute
         'allowance'             => 'integer',
         'match_points'          => 'integer',
         'match_points_adjusted' => 'integer',
@@ -49,8 +54,8 @@ class Score extends Model
         return $this->belongsTo(Entry::class);
     }
 
-    public function matchResult(): HasOne
+    public function matchResult(): BelongsTo
     {
-        return $this->hasOne(MatchResult::class);
+        return $this->belongsTo(MatchResult::class);
     }
 }
