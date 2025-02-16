@@ -10,6 +10,7 @@ use App\Services\CompetitionService;
 use App\Services\EntryService;
 use App\Services\MatchResultService;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\View\View;
 
 class MatchResultController extends Controller
@@ -22,6 +23,8 @@ class MatchResultController extends Controller
 
     public function index(Competition $competition, Stage $stage): View
     {
+        Gate::authorize('viewAny', MatchResult::class);
+
         $rounds  = $this->competitionService->getRoundsForStage($stage);
         $matches = $this->matchResultService->getMatchResultsForStage($stage);
 
@@ -35,6 +38,8 @@ class MatchResultController extends Controller
 
     public function create(Competition $competition, Stage $stage): View
     {
+        Gate::authorize('create', MatchResult::class);
+
         $entries = $this->entryService->getCompetitionEntries($competition);
 
         return view('matches.create', [
@@ -46,14 +51,17 @@ class MatchResultController extends Controller
 
     public function store(MatchResultRequest $request, Competition $competition, Stage $stage): RedirectResponse
     {
-        $data = $request->validated();
-        $this->matchResultService->recordMatchResult($stage, $data);
+        Gate::authorize('create', MatchResult::class);
+
+        $this->matchResultService->recordMatchResult($stage, $request->validatedData());
 
         return redirect()->route('competitions.show', $competition);
     }
 
     public function show(Competition $competition, Stage $stage, MatchResult $match): View
     {
+        Gate::authorize('view', $match);
+
         return view('matches.show', [
             'competition' => $competition,
             'stage'       => $stage,
@@ -63,6 +71,8 @@ class MatchResultController extends Controller
 
     public function edit(Competition $competition, Stage $stage, MatchResult $match): View
     {
+        Gate::authorize('update', $match);
+
         $entries = $this->entryService->getCompetitionEntries($competition);
 
         return view('matches.edit', [
@@ -75,14 +85,17 @@ class MatchResultController extends Controller
 
     public function update(MatchResultRequest $request, Competition $competition, Stage $stage, MatchResult $match): RedirectResponse
     {
-        $data = $request->validated();
-        $this->matchResultService->updateMatchResult($match, $stage, $data);
+        Gate::authorize('update', $match);
+
+        $this->matchResultService->updateMatchResult($match, $stage, $request->validatedData());
 
         return redirect()->route('competitions.show', $competition);
     }
 
     public function destroy(Competition $competition, Stage $stage, MatchResult $match): RedirectResponse
     {
+        Gate::authorize('delete', $match);
+
         $this->matchResultService->removeMatchResult($match);
 
         return redirect()->route('competitions.show', $competition);

@@ -6,7 +6,7 @@ use App\Models\MatchResult;
 use App\Models\User;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
-class MatchPolicy
+class MatchResultPolicy
 {
     use HandlesAuthorization;
 
