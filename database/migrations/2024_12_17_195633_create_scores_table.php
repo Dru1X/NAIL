@@ -10,8 +10,10 @@ return new class extends Migration {
         Schema::create('scores', function (Blueprint $table) {
             $table->id();
 
+            $table->foreignId('match_result_id')->constrained('match_results');
             $table->foreignId('entry_id')->constrained('entries');
 
+            $table->string('side', 5)->index();
             $table->unsignedTinyInteger('handicap_before');
             $table->unsignedTinyInteger('handicap_after');
             $table->unsignedMediumInteger('allowance');
